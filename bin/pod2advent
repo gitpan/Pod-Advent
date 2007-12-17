@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Pod::Advent;
+
+my $pod = shift @ARGV or die "need pod filename";
+
+my $advent = Pod::Advent->new;
+$advent->parse_file( $pod );
+

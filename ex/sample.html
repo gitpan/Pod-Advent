@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>2007 Perl Advent Calendar: This is a sample</title>
+<link rel="stylesheet" href="../style.css" type="text/css" /></head>
+<body>
+<h1><a href="../">Perl Advent Calendar 2007-12</a>-32</h1>
+<h2 align="center">This is a sample</h2>
+<h3 align="center">by David Westbrook</h3>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee">First a quote section.Second verse.</blockquote>
+<p><B>See the <tt><a href="sample.pod">sample.pod</a></tt> file that this HTML was generated from.</B></p>
+<p>Then an <tt><a href="http://www.example.com/foo/bar.txt">Example Link</a></tt> for a <tt><a href="http://search.cpan.org/search?query=Pod::Simple">Pod::Simple</a></tt> module. See also <tt><a href="http://search.cpan.org/search?query=Pod::Simple::Subclassing">Pod::Simple::Subclassing</a></tt>. Now we mention <tt>Pod::Simple</tt> again. Now we talk about a <tt>data.txt</tt> file. And our copy of <tt><a href="data.txt">data.txt</a></tt>.</p>
+<h2>Other tags</h2>
+<p>Regular <B>bold</B> and <I>italics</I> work too.</p>
+<p>And inline code such as this <tt><span class="k">my</span> <span class="i">$foo</span>=<span class="w">Bar</span>-
+&gt;
+<span class="i">new</span><span class="s">(</span><span class="s">)</span>
+</tt> snippet.</p>
+<p>And regular pod Verbatim is treated as code:</p>
+<pre>
+  <span class="k">my</span> <span class="i">$x</span> = <span class="i">$y</span><span class="sc">;</span>
+  <span class="i">$x</span> += <span class="n">3</span><span class="sc">;</span>
+</pre>
+<h2>More code examples</h2>
+<p>Just a code snippet:</p>
+<pre>
+<span class="k">foreach</span> <span class="k">my</span> <span class="i">$foo</span> <span class="s">(</span> <span class="i">@bar</span> <span class="s">)</span><span class="s">{</span>
+  <span class="k">print</span> <span class="i">$foo</span><span class="sc">;</span>
+<span class="s">}</span>
+
+<span class="k">my</span> <span class="i">$x</span><span class="sc">;</span>
+</pre>
+
+<p>A code snippet w/line numbers:</p>
+<pre>
+   1 <span class="k">foreach</span> <span class="k">my</span> <span class="i">$foo</span> <span class="s">(</span> <span class="i">@bar</span> <span class="s">)</span><span class="s">{</span>
+   2   <span class="k">print</span> <span class="i">$foo</span><span class="sc">;</span>
+   3 <span class="s">}</span>
+   4 
+   5 <span class="k">my</span> <span class="i">$bar</span><span class="sc">;</span>
+</pre>
+
+<p>And code sourced from the <tt><a href="sample.pl">sample.pl</a></tt> file:</p>
+<a name="sample.pl"></a><h2><a href="sample.pl">sample.pl</a></h2><pre>
+   1 <span class="k">use</span> <span class="w">Example::Module</span><span class="sc">;</span>
+   2 <span class="k">my</span> <span class="i">$obj</span> = <span class="w">Example::Module</span><span class="w">-&gt;new</span><span class="s">(</span><span class="s">)</span><span class="sc">;</span>
+   3 <span class="k">foreach</span> <span class="k">my</span> <span class="i">$x</span> <span class="s">(</span> <span class="i">$obj</span><span class="i">-&gt;get_list</span> <span class="s">)</span><span class="s">{</span>
+   4   <span class="k">printf</span> <span class="q">&quot;Foo == %s ==\n&quot;</span><span class="cm">,</span> <span class="i">$x</span><span class="sc">;</span>
+   5 <span class="s">}</span>
+</pre>
+<p>And just &lt;pre&gt; tag stuff, e.g. for output or data.</p>
+<pre><span class="c">This is just preformatted
+       t
+         e
+           x
+             t.
+Which is good for output examples.
+
+and more output</span></pre>
+<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee"><p>Editorial section</p>
+<p>Testing <B>bold</B> and <I>italics</I> and <tt><a href="http://search.cpan.org/search?query=Foo::Bar">Foo::Bar</a></tt> module link</p>
+</blockquote>
+
+</body>
+</html>
