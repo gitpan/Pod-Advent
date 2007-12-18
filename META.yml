@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Pod-Advent
-version:             0.01
+version:             0.02
 abstract:            POD Formatter for The Perl Advent Calendar
 license:             ~
 author:              

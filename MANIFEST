@@ -8,6 +8,9 @@ t/00-load.t
 t/pod-coverage.t
 t/pod.t
 t/boilerplate.t
-ex/sample.pod
+t/general.t
+ex/sample.pod.txt
 ex/sample.html
+ex/sample.pl
+style.css
 META.yml                                 Module meta-data (added by MakeMaker)
