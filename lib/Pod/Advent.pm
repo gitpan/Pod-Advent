@@ -5,7 +5,7 @@ use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @mode;
 our $section = '';
 our %data = (
@@ -239,7 +239,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =head1 SYNOPSIS
 
@@ -417,6 +417,12 @@ Expected behavior (N=1..4): uses E<lt>headNE<gt>
 =head1 TODO
 
 create test suite
+
+create test for bin/pod2advent
+
+create test for output_fh not being set
+
+test w/more complicated perl samples, for differences in Perl::Tidy versions.
 
 include sample.pod and sample.html
 
