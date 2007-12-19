@@ -5,7 +5,7 @@ use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our @mode;
 our $section = '';
 our %data = (
@@ -27,7 +27,7 @@ our %M_values_seen;
 sub new {
   my $self = shift;
   $self = $self->SUPER::new(@_);
-  $self->accept_codes( qw/A M Y N/ );
+  $self->accept_codes( qw/A M N/ );
   $self->accept_targets_as_text( qw/advent_title advent_author advent_year advent_day/ );
   $self->accept_targets( qw/code codeNNN pre/ );
   $self->accept_targets_as_text( qw/quote eds/ );
@@ -103,7 +103,7 @@ sub _handle_element_end {
 <h3 align="center">by %s</h3>
 EOF
     my @d = (localtime)[5,4,3,2,1,0]; $d[1]++; $d[0]+=1900;
-    my $fh = $parser->output_fh();
+    my $fh = $parser->output_fh() || \*STDOUT;
     printf $fh $fmt,
 	$Pod::Advent::VERSION, $Pod::Simple::VERSION, $Perl::Tidy::VERSION,
 	@d[0..5],
@@ -190,20 +190,8 @@ sub _handle_text {
     );
     $s =~ s#^<pre>\s*(.*?)\s*</pre>$#$1#si;
     $out .= $s;
-  }elsif( $mode eq 'Y' ){
-    my $s;
-    Perl::Tidy::perltidy(
-        source            => $text,
-        destination       => \$s,
-        argv              => [qw/-html -pre -nnn/],
-    );
-    $out .= $s;
   }elsif( $mode eq 'N' ){
     $out .= sprintf '<sup><a href="#%s">%s</a></sup>', $text, $text;
-  }elsif( $mode =~ /^head1/ && $text =~ /^(NAME)$/ ){
-    $section = 'title';
-  }elsif( $mode =~ /^head1/ && $text =~ /^(AUTHORS?)$/ ){
-    $section = 'author';
   }elsif( $mode eq 'sourcedcode' ){
 #    $section = $mode;
     die "bad filename $text " unless -r $text;
@@ -251,7 +239,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 SYNOPSIS
 
@@ -259,6 +247,22 @@ Version 0.02
   my $pod = shift @ARGV or die "need pod filename";
   my $advent = Pod::Advent->new;
   $advent->parse_file( \*STDIN );
+
+Example POD:
+
+  =for advent_year 2007
+
+  =for advent_day 32
+
+  =for advent_title This is a sample
+
+  =for advent_author Your Name Here
+
+  Today's module M<My::Example> is featured on
+  the A<http://example.com|Example Place> web site
+  and is I<very> B<special>.
+
+  =sourcedcode example.pl
 
 =head1 DESCRIPTION
 
@@ -272,7 +276,7 @@ For example, 'file-, module and program names should be wrapped in <tt>,' and 't
 
 The meta-data of title, date (year & day), and author is now easy to specify as well, and is used to automatically generate the full HTML header (including style) that the calendar entries require before being posted.
 
-Example: L<ex/sample.pod.txt> renders as L<ex/sample.html>
+See F<ex/sample.pod.txt> and F<ex/sample.html> in the distribution for a fuller example.
 
 =head1 SUPPORTED POD
 
@@ -415,8 +419,6 @@ Expected behavior (N=1..4): uses E<lt>headNE<gt>
 create test suite
 
 include sample.pod and sample.html
-
-code cleanup (remove the =head1 NAME support, and Y-code support)
 
 code refactoring (package var usage; also maybe make code/directive behavior based on a config data structure)
 

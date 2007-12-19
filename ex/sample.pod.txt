@@ -7,6 +7,8 @@
 
 =for advent_author David Westbrook
 
+=for a_non_existent_target some value
+
 =begin quote
 
 First a quote section.
@@ -22,6 +24,17 @@ for a M<Pod::Simple> module.  See also M<Pod::Simple::Subclassing>.
 Now we mention M<Pod::Simple> again.
 Now we talk about a F<data.txt> file.
 And our copy of L<data.txt>.
+And a plain A<http://www.example.com> a/href.
+
+And some foot-noted text.N<1>
+
+=head1 BIG Header (1)
+
+=head2 normal header (2)
+
+=head3 little header (3)
+
+=head4 littlest header (4)
 
 =head2 Other tags
 
@@ -87,4 +100,6 @@ Testing B<bold> and I<italics> and M<Foo::Bar> module link
 
 =end eds
 
+<a name="1"></a>1.
+This is the first footnote.
 
