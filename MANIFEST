@@ -10,8 +10,11 @@ t/pod.t
 t/boilerplate.t
 t/general.t
 t/sample.t
+t/attributes.t
+t/packagevars.t
 ex/sample.pod.txt
 ex/sample.html
 ex/sample.pl
 style.css
+coverage
 META.yml                                 Module meta-data (added by MakeMaker)

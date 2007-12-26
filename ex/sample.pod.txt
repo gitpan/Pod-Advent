@@ -100,6 +100,6 @@ Testing B<bold> and I<italics> and M<Foo::Bar> module link
 
 =end eds
 
-<a name="1"></a>1.
+<a name="footnote1" id="footnote1"></a>1.
 This is the first footnote.
 

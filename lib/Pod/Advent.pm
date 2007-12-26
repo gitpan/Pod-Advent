@@ -5,7 +5,7 @@ use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 our @mode;
 our $section = '';
 our %data = (
@@ -14,6 +14,8 @@ our %data = (
   year => (localtime)[5]+1900,
   day => 0,
   body => '',
+  file => undef,
+  css_url => '../style.css',
 );
 our %blocks = (
   code => '',
@@ -34,6 +36,20 @@ sub new {
 #  $self->accept_targets_as_text( map { "footnote$_" } 1 .. 25 );
   $self->accept_directive_as_data('sourcedcode');
   return $self;
+}
+
+sub css_url {
+  my $self = shift;
+  if( scalar @_ ){
+    $data{css_url} = $_[0];
+  }
+  return $data{css_url};
+}
+
+sub parse_file {
+  my $self = shift;
+  $data{file} = $_[0] if ! ref($_[0]);  # if it's a scalar, meaning a filename
+  $self = $self->SUPER::parse_file(@_);
 }
 
 sub add {
@@ -59,7 +75,7 @@ sub _handle_element_start {
     $parser->add('<h3>');
   }elsif( $element_name eq 'head4' ){
     $parser->add('<h4>');
-  }elsif( $element_name eq 'Para' ){
+  }elsif( $element_name eq 'Para' && ($mode[-2]||'') ne 'for' ){
     $parser->add('<p>');
   }elsif( $element_name eq 'L' ){
     $parser->add( sprintf('<tt><a href="%s">',$attr_hash_r->{to}) );
@@ -72,9 +88,9 @@ sub _handle_element_start {
   }elsif( $element_name eq 'C' ){
     $parser->add('<tt>');
   }elsif( $element_name eq 'I' ){
-    $parser->add('<I>');
+    $parser->add('<span style="font-style: italic">');
   }elsif( $element_name eq 'B' ){
-    $parser->add('<B>');
+    $parser->add('<span style="font-weight: bold">');
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} =~ /^advent_(\w+)$/ ){
     $section = $1;
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} =~ /^quote|eds$/ ){
@@ -96,7 +112,7 @@ sub _handle_element_end {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>%d Perl Advent Calendar: %s</title>
-<link rel="stylesheet" href="../style.css" type="text/css" /></head>
+<link rel="stylesheet" href="%s" type="text/css" /></head>
 <body>
 <h1><a href="../">Perl Advent Calendar %d-12</a>-%02d</h1>
 <h2 align="center">%s</h2>
@@ -107,9 +123,12 @@ EOF
     printf $fh $fmt,
 	$Pod::Advent::VERSION, $Pod::Simple::VERSION, $Perl::Tidy::VERSION,
 	@d[0..5],
-	map {defined($_)?$_:''} @data{qw/year title year day title author/},
+	map {defined($_)?$_:''} @data{qw/year title css_url year day title author/},
     ;
     print $fh $data{body};
+    if( $data{file} ){
+      printf $fh '<div style="float: right; font-size: 10pt"><a href="%s">POD</a></div><br />'."\n", $data{file};
+    }
     print $fh <<'EOF';
 </body>
 </html>
@@ -126,7 +145,7 @@ EOF
   }elsif( $element_name eq 'head4' ){
     $parser->add('</h4>');
     $parser->nl;
-  }elsif( $element_name eq 'Para' ){
+  }elsif( $element_name eq 'Para' && ($mode[-1]||'') ne 'for' ){
     $parser->add('</p>');
     $parser->nl;
   }elsif( $element_name eq 'for' && $mode =~ /^quote|eds$/ ){
@@ -163,9 +182,9 @@ EOF
   }elsif( $element_name eq 'C' ){
     $parser->add('</tt>');
   }elsif( $element_name eq 'I' ){
-    $parser->add('</I>');
+    $parser->add('</span>');
   }elsif( $element_name eq 'B' ){
-    $parser->add('</B>');
+    $parser->add('</span>');
   }
 }
 
@@ -191,12 +210,12 @@ sub _handle_text {
     $s =~ s#^<pre>\s*(.*?)\s*</pre>$#$1#si;
     $out .= $s;
   }elsif( $mode eq 'N' ){
-    $out .= sprintf '<sup><a href="#%s">%s</a></sup>', $text, $text;
+    $out .= sprintf '<sup><a href="#footnote%s">%s</a></sup>', $text, $text;
   }elsif( $mode eq 'sourcedcode' ){
 #    $section = $mode;
-    die "bad filename $text " unless -r $text;
+    die "bad filename '$text'" unless -r $text;
     $blocks{sourced_file} = $text;
-    $out .= sprintf '<a name="%s"></a><h2><a href="%s">%s</a></h2>', ($text)x3;
+    $out .= sprintf '<a name="%s" id="%s"></a><h2><a href="%s">%s</a></h2>', ($text)x4;
     my $s;
     Perl::Tidy::perltidy(
         source            => $text,
@@ -239,7 +258,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =head1 SYNOPSIS
 
@@ -303,7 +322,7 @@ Insert a superscript footnote reference. It will link to a #N anchor.
 
   In this entry we talk about XYZ.N<3>
   ...
-  <a name="3"></a>3.
+  <a name="3" id="3"></a>3.
   Some footnote about XYZ.
 
 =head2 Custom Directives
@@ -416,7 +435,9 @@ Expected behavior (N=1..4): uses E<lt>headNE<gt>
 
 =head1 TODO
 
-create test suite
+attribute to suppress header & footer printing (for testing purposes for testing small POD snippets)
+
+more tests
 
 create test for bin/pod2advent
 
@@ -424,17 +445,11 @@ create test for output_fh not being set
 
 test w/more complicated perl samples, for differences in Perl::Tidy versions.
 
-include sample.pod and sample.html
-
 code refactoring (package var usage; also maybe make code/directive behavior based on a config data structure)
 
 footnotes
 
-over/item
-
-optional stylesheet
-
-supported pod docs
+support for =over/=item
 
 docs re: html passing through
 
@@ -444,8 +459,6 @@ specify 5.6.1 as min perl ... https://rt.cpan.org/Public/Bug/Display.html?id=283
 
 check html output for validity
 
-try w/other Pod::Simple output options .. e.g. to scalar to file or handle. (i.e. not always just plain 'print')
-
 =head1 METHODS
 
 See L<Pod::Simple> for all of the inherited methods.  Also see L<Pod::Simple::Subclassing> for more information.
@@ -453,6 +466,14 @@ See L<Pod::Simple> for all of the inherited methods.  Also see L<Pod::Simple::Su
 =head2 new
 
 Constructor.  See L<Pod::Simple>.
+
+=head2 parse_file
+
+Overloaded from Pod::Simple -- if input is a filename, will add a link to it at the bottom of the generated HTML.
+
+=head2 css_url
+
+Accessor/mutator for the stylesheet to use.  Defaults to F<../style.css>
 
 =head1 INTERNAL METHODS
 
