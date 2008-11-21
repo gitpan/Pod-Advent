@@ -19,7 +19,7 @@ pod2advent - create Perl Advent Calendar html from POD file
 
 =head1 SYNOPSIS
 
-pod2advent entry.pod > entry.html
+  pod2advent entry.pod > entry.html
 
 =head1 DESCRIPTION
 

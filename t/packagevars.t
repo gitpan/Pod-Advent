@@ -2,13 +2,14 @@
 
 use strict;
 use warnings;
-use Test::More tests => 18;
+use Test::More tests => 19;
 use Pod::Advent;
 
-is( $Pod::Advent::VERSION, '0.05', 'got VERSION' );
+is( $Pod::Advent::VERSION, '0.06', 'got VERSION' );
 is( $Pod::Advent::section, '', 'got section' );
 is_deeply( \@Pod::Advent::mode, [], 'got mode' );
 is_deeply( \%Pod::Advent::M_values_seen, {}, 'got M_values_seen' );
+is( $Pod::Advent::BODY_ONLY, '0', 'got BODY_ONLY' );
 
 my $h;
 

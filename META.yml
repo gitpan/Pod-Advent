@@ -1,16 +1,23 @@
 --- #YAML:1.0
-name:                Pod-Advent
-version:             0.05
-abstract:            POD Formatter for The Perl Advent Calendar
-license:             ~
-generated_by:        ExtUtils::MakeMaker version 6.36
-distribution_type:   module
-requires:     
-    Perl::Tidy:                    0
-    Pod::Simple:                   0
-    Test::More:                    0
-meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
-    version: 1.2
+name:               Pod-Advent
+version:            0.06
+abstract:           POD Formatter for The Perl Advent Calendar
 author:
     - David Westbrook <dwestbrook@gmail.com>
+license:            unknown
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+requires:
+    perl:         5.006001
+    Perl::Tidy:   0
+    Pod::Simple:  0
+    Test::More:   0
+no_index:
+    directory:
+        - t
+        - inc
+generated_by:       ExtUtils::MakeMaker version 6.48
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4

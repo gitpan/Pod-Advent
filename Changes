@@ -1,5 +1,17 @@
 Revision history for Pod-Advent
 
+0.06    2008-11-21
+        * added a 'Getting Started' example
+        * added 'use 5.006' and MIN_PERL_VERSION to Makefile.PL
+        * Updated examples to advent_year=2008
+        * Added $Pod::Advent::BODY_ONLY package var attribute to suppress
+          header & footer printing -- intended for testing purposes for
+          testing small POD snippets.
+        * Added a __reset() method to reset the package vars -- intended
+          for testing purposes for multiple parsing (e.g. t/snippets.t).
+        * Added t/snippets.t -- take advantage of $BODY_ONLY package vat.
+        * renamed coverage to docs/coverage.txt
+
 0.05    2007-12-26
         * If input is a filename, adds a 'POD' link at the bottom of the html
         * Added an accessor/mutator for css_url() to customize the stylesheet

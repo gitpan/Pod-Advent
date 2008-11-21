@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use 5.006;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
@@ -13,6 +14,7 @@ WriteMakefile(
 	'Pod::Simple' => 0,
 	'Perl::Tidy' => 0,
     },
+    MIN_PERL_VERSION    => '5.6.1',
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Pod-Advent-*' },
 );

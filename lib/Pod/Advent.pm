@@ -5,26 +5,41 @@ use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
+
 our @mode;
-our $section = '';
-our %data = (
-  title => undef,
-  author => undef,
-  year => (localtime)[5]+1900,
-  day => 0,
-  body => '',
-  file => undef,
-  css_url => '../style.css',
-);
-our %blocks = (
-  code => '',
-  codeNNN => '',
-  pre => '',
-  sourced_file => '',
-  sourced_desc => '',
-);
+our $section;
+our %data;
+our %blocks;
 our %M_values_seen;
+our $BODY_ONLY;
+
+__PACKAGE__->__reset();
+
+sub __reset(){
+  my $self = shift;
+
+  @mode = ();
+  $section = '';
+  %data = (
+    title => undef,
+    author => undef,
+    year => (localtime)[5]+1900,
+    day => 0,
+    body => '',
+    file => undef,
+    css_url => '../style.css',
+  );
+  %blocks = (
+    code => '',
+    codeNNN => '',
+    pre => '',
+    sourced_file => '',
+    sourced_desc => '',
+  );
+  %M_values_seen = ();
+  $BODY_ONLY = 0;
+}
 
 sub new {
   my $self = shift;
@@ -35,6 +50,7 @@ sub new {
   $self->accept_targets_as_text( qw/quote eds/ );
 #  $self->accept_targets_as_text( map { "footnote$_" } 1 .. 25 );
   $self->accept_directive_as_data('sourcedcode');
+  $self->__reset();
   return $self;
 }
 
@@ -120,16 +136,16 @@ sub _handle_element_end {
 EOF
     my @d = (localtime)[5,4,3,2,1,0]; $d[1]++; $d[0]+=1900;
     my $fh = $parser->output_fh() || \*STDOUT;
-    printf $fh $fmt,
+    printf( $fh $fmt,
 	$Pod::Advent::VERSION, $Pod::Simple::VERSION, $Perl::Tidy::VERSION,
 	@d[0..5],
 	map {defined($_)?$_:''} @data{qw/year title css_url year day title author/},
-    ;
+    ) unless $BODY_ONLY;
     print $fh $data{body};
     if( $data{file} ){
       printf $fh '<div style="float: right; font-size: 10pt"><a href="%s">POD</a></div><br />'."\n", $data{file};
     }
-    print $fh <<'EOF';
+    print $fh <<'EOF' unless $BODY_ONLY;
 </body>
 </html>
 EOF
@@ -258,9 +274,15 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =head1 SYNOPSIS
+
+Most likely, the included I<pod2advent> script is all you will need:
+
+  pod2advent entry.pod > entry.html
+
+Or, using this module directly:
 
   use Pod::Advent;
   my $pod = shift @ARGV or die "need pod filename";
@@ -269,7 +291,7 @@ Version 0.05
 
 Example POD:
 
-  =for advent_year 2007
+  =for advent_year 2008
 
   =for advent_day 32
 
@@ -282,6 +304,9 @@ Example POD:
   and is I<very> B<special>.
 
   =sourcedcode example.pl
+
+B<Getting Started:>
+See F<ex/getting_started.pod> and F<ex/getting_started.html> in the distribution for an initial template.
 
 =head1 DESCRIPTION
 
@@ -347,7 +372,7 @@ Specify the author of the submission.
 
 Specify the year of the submission (defaults to current year).
 
-  =for advent_year 2007
+  =for advent_year 2008
 
 =head3 advent_day
 
@@ -435,8 +460,6 @@ Expected behavior (N=1..4): uses E<lt>headNE<gt>
 
 =head1 TODO
 
-attribute to suppress header & footer printing (for testing purposes for testing small POD snippets)
-
 more tests
 
 create test for bin/pod2advent
@@ -454,8 +477,6 @@ support for =over/=item
 docs re: html passing through
 
 spell check support -- probably on the POD, as opposed to generated html
-
-specify 5.6.1 as min perl ... https://rt.cpan.org/Public/Bug/Display.html?id=28374
 
 check html output for validity
 
@@ -499,7 +520,7 @@ Overload of method to process handling of text.
 
 =head1 AUTHOR
 
-David Westbrook, C<< <dwestbrook at gmail.com> >>
+David Westbrook (CPAN: davidrw), C<< <dwestbrook at gmail.com> >>
 
 =head1 BUGS
 
