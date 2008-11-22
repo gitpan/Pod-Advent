@@ -1,4 +1,3 @@
-
 =for advent_year 2008
 
 =for advent_day 32
@@ -102,4 +101,3 @@ Testing B<bold> and I<italics> and M<Foo::Bar> module link
 
 <a name="footnote1" id="footnote1"></a>1.
 This is the first footnote.
-

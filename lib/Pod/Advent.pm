@@ -5,7 +5,7 @@ use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 our @mode;
 our $section;
@@ -274,15 +274,19 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
-=head1 SYNOPSIS
+=head1 GETTING STARTED
 
 Most likely, the included I<pod2advent> script is all you will need:
 
   pod2advent entry.pod > entry.html
 
-Or, using this module directly:
+Where the .pod is written using the tags described below.  There is also a quick start at L<http://search.cpan.org/dist/Pod-Advent/ex/getting_started.html>.
+
+=head1 SYNOPSIS
+
+Using this module directly:
 
   use Pod::Advent;
   my $pod = shift @ARGV or die "need pod filename";
@@ -320,7 +324,7 @@ For example, 'file-, module and program names should be wrapped in <tt>,' and 't
 
 The meta-data of title, date (year & day), and author is now easy to specify as well, and is used to automatically generate the full HTML header (including style) that the calendar entries require before being posted.
 
-See F<ex/sample.pod.txt> and F<ex/sample.html> in the distribution for a fuller example.
+See F<ex/sample.pod> and F<ex/sample.html> in the distribution for a fuller example.
 
 =head1 SUPPORTED POD
 
@@ -459,6 +463,8 @@ Normal behavior: uses E<lt>BE<gt>
 Expected behavior (N=1..4): uses E<lt>headNE<gt>
 
 =head1 TODO
+
+ability to force html encoding? (see 0.07 changelog entry re: you're)
 
 more tests
 

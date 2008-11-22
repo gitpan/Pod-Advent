@@ -12,7 +12,7 @@ my $advent = Pod::Advent->new;
 isa_ok($advent, 'Pod::Advent');
 my $s;
 $advent->output_string( \$s );
-$advent->parse_file( 'sample.pod.txt' );
+$advent->parse_file( 'sample.pod' );
 
 my $html = do{ local $/ = undef; open FILE, '<', 'sample.html'; <FILE> };
 

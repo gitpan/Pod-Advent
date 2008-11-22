@@ -18,7 +18,7 @@ $ pod2advent getting_started.pod > pod2advent getting_started.html
 
 =end code
 
-And we get the file that you're now reading.
+And we get the file that you are now reading.
 The POD source is included below
 (normally this would be your I<.pl> script file):
 
