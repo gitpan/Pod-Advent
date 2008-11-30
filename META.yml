@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Pod-Advent
-version:            0.07
+version:            0.08
 abstract:           POD Formatter for The Perl Advent Calendar
 author:
     - David Westbrook <dwestbrook@gmail.com>
@@ -9,11 +9,12 @@ distribution_type:  module
 configure_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    IO::Scalar:   0
-    perl:         5.006001
-    Perl::Tidy:   0
-    Pod::Simple:  0
-    Test::More:   0
+    IO::Scalar:    0
+    perl:          5.006001
+    Perl::Tidy:    0
+    Pod::Simple:   0
+    Test::More:    0
+    Text::Aspell:  0
 no_index:
     directory:
         - t

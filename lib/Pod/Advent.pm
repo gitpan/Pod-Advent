@@ -4,8 +4,9 @@ use strict;
 use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
+use Text::Aspell;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 our @mode;
 our $section;
@@ -13,6 +14,8 @@ our %data;
 our %blocks;
 our %M_values_seen;
 our $BODY_ONLY;
+our $speller;
+our @misspelled;
 
 __PACKAGE__->__reset();
 
@@ -39,6 +42,8 @@ sub __reset(){
   );
   %M_values_seen = ();
   $BODY_ONLY = 0;
+  $speller = Text::Aspell->new;
+  @misspelled = ();
 }
 
 sub new {
@@ -244,10 +249,12 @@ sub _handle_text {
   }elsif( $mode eq 'Para' && $section ){
     $data{$section} = $text;
     $section = '';
+    $parser->__spellcheck($text);
   }elsif( $mode eq 'A' ){
     my ($href, $text) = split /\|/, $text, 2;
     $text = $href unless defined $text;
     $parser->add( sprintf('<a href="%s">%s</a>',$href,$text) );
+    $parser->__spellcheck($text) unless $text =~ /^http/;
   }elsif( $mode eq 'M' ){
     if( $M_values_seen{$text}++ ){
       $parser->add($text);
@@ -257,9 +264,34 @@ sub _handle_text {
   }elsif( $mode eq 'Data' && $section ){
     $blocks{$section} .= $text . "\n\n";
   }else{
+    if( $mode !~ /^(F|L)$/ ){
+      $parser->__spellcheck($text);
+    }
     $out .= $text;
   }
   $parser->add( $out, undef );
+}
+
+sub __spellcheck {
+  my $parser = shift;
+  my $text = shift;
+  my $bad_ct = 0;
+  foreach my $word (  split /\W+/, $text ){
+    next if $speller->check( $word ) || $word =~ /^\d+$/;
+    push @misspelled, $word;
+    $bad_ct++;
+  }
+  return $bad_ct;
+}
+
+sub spelling_errors {
+  my $self = shift;
+  return @misspelled;
+}
+
+sub num_spelling_errors {
+  my $self = shift;
+  return scalar @misspelled;
 }
 
 1; # End of Pod::Advent
@@ -274,7 +306,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.07
+Version 0.08
 
 =head1 GETTING STARTED
 
@@ -357,6 +389,10 @@ Insert a superscript footnote reference. It will link to a #N anchor.
 =head2 Custom Directives
 
 =head3 sourcedcode
+
+Include the contents of a file formatted with Perl::Tidy (including line numbers).
+
+  =sourcedcode foo.pl
 
 =head2 Custom Info Targets
 
@@ -482,9 +518,9 @@ support for =over/=item
 
 docs re: html passing through
 
-spell check support -- probably on the POD, as opposed to generated html
-
 check html output for validity
+
+custom podchecker (and/or subclass of Pod::Checker)
 
 =head1 METHODS
 
@@ -501,6 +537,15 @@ Overloaded from Pod::Simple -- if input is a filename, will add a link to it at 
 =head2 css_url
 
 Accessor/mutator for the stylesheet to use.  Defaults to F<../style.css>
+
+=head2 num_spelling_errors
+
+Returns the number of (possible) spelling errors found while parsing.
+
+=head2 spelling_errors
+
+Returns an array of the (possible) spelling errors found while parsing.
+
 
 =head1 INTERNAL METHODS
 
@@ -523,6 +568,14 @@ Overload of method to process end of an element.
 =head2 _handle_text
 
 Overload of method to process handling of text.
+
+=head2 __reset
+
+Resets all of the internal (package) variables.
+
+=head2 __spellcheck
+
+Splits a chunk of text into words and runs it through Text::Aspell.
 
 =head1 AUTHOR
 
@@ -590,17 +643,21 @@ L<perlpod> - POD documentation
 
 L<Perl::Tidy> - used for formatting code
 
+=item *
+
+L<Text::Aspell> - used for spellchecking
+
 =back
 
 =head1 ACKNOWLEDGEMENTS
 
 The maintainers of The Perl Advent Calendar at L<http://perladvent.pm.org>.
 
-The 2007 editors, Bill Ticker & Jerrad Pierce, for reviewing and providing feedback on this concept.
+The 2007 editors, Bill Ricker & Jerrad Pierce, for reviewing and providing feedback on this concept.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2007 David Westbrook, all rights reserved.
+Copyright 2007-2009 David Westbrook, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

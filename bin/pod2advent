@@ -8,7 +8,10 @@ my $pod = shift @ARGV or die "need pod filename";
 
 my $advent = Pod::Advent->new;
 $advent->parse_file( $pod );
-
+if( $advent->num_spelling_errors ){
+  print STDERR "Possible SPELLING ERRORS:\n";
+  print STDERR "\t$_\n" for $advent->spelling_errors;
+}
 __END__
 
 =pod

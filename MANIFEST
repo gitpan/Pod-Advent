@@ -14,6 +14,7 @@ t/getting_started.t
 t/attributes.t
 t/packagevars.t
 t/snippets.t
+t/spellcheck.t
 ex/sample.pod
 ex/sample.html
 ex/sample.pl

@@ -14,6 +14,7 @@ WriteMakefile(
 	'Pod::Simple' => 0,
 	'Perl::Tidy' => 0,
 	'IO::Scalar' => 0,
+	'Text::Aspell' => 0,
     },
     MIN_PERL_VERSION    => '5.6.1',
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

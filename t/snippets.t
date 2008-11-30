@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 22;
+use Test::More tests => 23;
 use Pod::Advent;
 use IO::Scalar;
 
@@ -52,6 +52,8 @@ test_snippet 'quote', qq{=begin quote\n\nfoo\n\n=end quote}, q{<blockquote style
 test_snippet 'eds', qq{=begin eds\n\nfoo\n\n=end eds}, q{<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee"><p>foo</p>
 </blockquote>
 }, 1;
+
+test_snippet 'unknown', qq{=begin unknown\n\nfoo\n\n=end unknown}, '', 1;
 
 test_snippet 'head1', qq{=head1 foo}, q{<h1>foo</h1>};
 test_snippet 'head1a', qq{=head1 foo\nbar}, q{<h1>foo bar</h1>};

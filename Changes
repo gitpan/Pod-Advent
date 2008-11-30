@@ -1,5 +1,18 @@
 Revision history for Pod-Advent
 
+0.08    2008-11-30
+	* Added spellcheck support
+	  + Text::Aspell is now a pre-req
+	  + New $speller and @misspelled pacakge vars
+	  + New num_spelling_errors() and spelling_errors() methods
+	  + New __spellcheck() internal method
+	  + POD updates
+	  + Added t/spellcheck.t
+	  + Updated t/getting_started.t and t/sample.t w/spellcheck tests
+	* pod2advent will warn about misspelled words.
+        * inc'd copyright year
+	* misc pod updates
+
 0.07    2008-11-22
         * Added POD 'GETTING STARTED' section, including a
           permalink to ex/getting_started.html example.
