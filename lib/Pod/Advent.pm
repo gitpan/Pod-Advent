@@ -6,7 +6,7 @@ use base qw(Pod::Simple);
 use Perl::Tidy;
 use Text::Aspell;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 our @mode;
 our $section;
@@ -43,6 +43,7 @@ sub __reset(){
   %M_values_seen = ();
   $BODY_ONLY = 0;
   $speller = Text::Aspell->new;
+  $speller->set_option('lang','en_US');
   @misspelled = ();
 }
 
@@ -133,7 +134,9 @@ sub _handle_element_end {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>%d Perl Advent Calendar: %s</title>
-<link rel="stylesheet" href="%s" type="text/css" /></head>
+<link rel="stylesheet" href="%s" type="text/css" />
+%s
+</head>
 <body>
 <h1><a href="../">Perl Advent Calendar %d-12</a>-%02d</h1>
 <h2 align="center">%s</h2>
@@ -144,11 +147,13 @@ EOF
     printf( $fh $fmt,
 	$Pod::Advent::VERSION, $Pod::Simple::VERSION, $Perl::Tidy::VERSION,
 	@d[0..5],
-	map {defined($_)?$_:''} @data{qw/year title css_url year day title author/},
+	(map {defined($_)?$_:''} @data{qw/year title css_url/}),
+	$data{file} ? qq{<link rel="alternate" type="text/plain" href="$data{file}" />} : "",
+	(map {defined($_)?$_:''} @data{qw/year day title author/}),
     ) unless $BODY_ONLY;
     print $fh $data{body};
     if( $data{file} ){
-      printf $fh '<div style="float: right; font-size: 10pt"><a href="%s">POD</a></div><br />'."\n", $data{file};
+      printf $fh '<div style="float: right; font-size: 10pt"><a href="%s">View Source (POD)</a></div><br />'."\n", $data{file};
     }
     print $fh <<'EOF' unless $BODY_ONLY;
 </body>
@@ -306,7 +311,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =head1 GETTING STARTED
 
@@ -379,11 +384,11 @@ This is intended for module names. The first instance, it will <tt> it and hyper
 
 =head3 NE<lt>E<gt>
 
-Insert a superscript footnote reference. It will link to a #N anchor.
+Insert a superscript footnote reference. It will link to a #footnoteN anchor.
 
   In this entry we talk about XYZ.N<3>
   ...
-  <a name="3" id="3"></a>3.
+  <a name="footnote3" id="footnote3"></a>3.
   Some footnote about XYZ.
 
 =head2 Custom Directives
@@ -499,6 +504,18 @@ Normal behavior: uses E<lt>BE<gt>
 Expected behavior (N=1..4): uses E<lt>headNE<gt>
 
 =head1 TODO
+
+make Text::Aspell usage optional (in case it isn't or can't be installed); add a --spellcheck option (default on) ..  and  warn cleanly if trying to sepllcheck and can't load Text::Aspell
+
+resposition the 'View Source (POD)' link?
+
+pod2advent for stylesheet
+
+pod2advent option to generate template (basically cat ex/getting_started.pod)
+
+pod2advent option to generate css (basically cat style.css)
+
+pod2advent option for 'POD' link vs rel=alternate tag
 
 ability to force html encoding? (see 0.07 changelog entry re: you're)
 

@@ -2,14 +2,17 @@
 
 use strict;
 use warnings;
-use Test::More tests => 19;
+use Test::More tests => 21;
 use Pod::Advent;
 
-is( $Pod::Advent::VERSION, '0.08', 'got VERSION' );
+is( $Pod::Advent::VERSION, '0.09', 'got VERSION' );
 is( $Pod::Advent::section, '', 'got section' );
 is_deeply( \@Pod::Advent::mode, [], 'got mode' );
 is_deeply( \%Pod::Advent::M_values_seen, {}, 'got M_values_seen' );
 is( $Pod::Advent::BODY_ONLY, '0', 'got BODY_ONLY' );
+
+isa_ok( $Pod::Advent::speller, 'Text::Aspell', "got speller" );
+is_deeply( \@Pod::Advent::misspelled, [], 'got misspelled' );
 
 my $h;
 

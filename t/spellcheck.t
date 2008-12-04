@@ -2,10 +2,15 @@
 
 use strict;
 use warnings;
-use Test::More tests => 22;
+use Test::More tests => 25;
 use Pod::Advent;
 
 my $advent = Pod::Advent->new;
+
+ok( $Pod::Advent::speller, "got speller" );
+isa_ok( $Pod::Advent::speller, 'Text::Aspell', "got Text::Aspell" );
+is( $Pod::Advent::speller->get_option('lang'), 'en_US', "en_US dictionary" );
+
 my $s;
 $advent->output_string( \$s );
 $advent->parse_file( \*DATA );

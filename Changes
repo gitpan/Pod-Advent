@@ -1,17 +1,28 @@
 Revision history for Pod-Advent
 
+0.09    2008-12-04
+        * Explicitly set Text::Aspell to language of en_US
+          + avoids test failures.
+          + Pod Advent Calendar is an english-language site.
+        *  <link rel="alternate" type="text/plain" href="getting_started.pod" />
+        * "View Source (POD)" for visibility/clarity
+        * pod2advent - suppress duplicate misspelled words
+        * pod typo fix re: footnotes
+        * added tests to t/packagevars.t for $speller & @misspelled
+        * added tests to t/spellcheck.t for $speller and language=en_US
+
 0.08    2008-11-30
-	* Added spellcheck support
-	  + Text::Aspell is now a pre-req
-	  + New $speller and @misspelled pacakge vars
-	  + New num_spelling_errors() and spelling_errors() methods
-	  + New __spellcheck() internal method
-	  + POD updates
-	  + Added t/spellcheck.t
-	  + Updated t/getting_started.t and t/sample.t w/spellcheck tests
-	* pod2advent will warn about misspelled words.
+        * Added spellcheck support
+          + Text::Aspell is now a pre-req
+          + New $speller and @misspelled pacakge vars
+          + New num_spelling_errors() and spelling_errors() methods
+          + New __spellcheck() internal method
+          + POD updates
+          + Added t/spellcheck.t
+          + Updated t/getting_started.t and t/sample.t w/spellcheck tests
+        * pod2advent will warn about misspelled words.
         * inc'd copyright year
-	* misc pod updates
+        * misc pod updates
 
 0.07    2008-11-22
         * Added POD 'GETTING STARTED' section, including a
