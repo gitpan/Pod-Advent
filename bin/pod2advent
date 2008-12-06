@@ -10,11 +10,12 @@ my $advent = Pod::Advent->new;
 $advent->parse_file( $pod );
 if( $advent->num_spelling_errors ){
   print STDERR "Possible SPELLING ERRORS:\n";
-  my $seen;
+  my %seen;
   foreach my $word ( $advent->spelling_errors ){
-    print STDERR "\t$_\n" unless $seen{$word}++;
+    print STDERR "\t$word\n" unless $seen{$word}++;
   }
 }
+
 __END__
 
 =pod

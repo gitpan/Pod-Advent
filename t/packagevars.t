@@ -5,7 +5,7 @@ use warnings;
 use Test::More tests => 21;
 use Pod::Advent;
 
-is( $Pod::Advent::VERSION, '0.09', 'got VERSION' );
+is( $Pod::Advent::VERSION, '0.10', 'got VERSION' );
 is( $Pod::Advent::section, '', 'got section' );
 is_deeply( \@Pod::Advent::mode, [], 'got mode' );
 is_deeply( \%Pod::Advent::M_values_seen, {}, 'got M_values_seen' );

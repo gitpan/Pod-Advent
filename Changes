@@ -1,10 +1,15 @@
 Revision history for Pod-Advent
 
+0.10    2008-12-05
+        * fixed typos in display-spelling-errors part of pod2advent
+        * added t/pod2advent-A.t, t/pod2advent-B.t, and t/pod2advent-C.t
+        * added IO::CaptureOutput as a prereq
+
 0.09    2008-12-04
         * Explicitly set Text::Aspell to language of en_US
           + avoids test failures.
           + Pod Advent Calendar is an english-language site.
-        *  <link rel="alternate" type="text/plain" href="getting_started.pod" />
+        * Added a  '<link rel="alternate" type="text/plain" href="<THISFILE>.pod" />' tag (RT#41330)
         * "View Source (POD)" for visibility/clarity
         * pod2advent - suppress duplicate misspelled words
         * pod typo fix re: footnotes

@@ -15,6 +15,9 @@ t/attributes.t
 t/packagevars.t
 t/snippets.t
 t/spellcheck.t
+t/pod2advent-A.t
+t/pod2advent-B.t
+t/pod2advent-C.t
 ex/sample.pod
 ex/sample.html
 ex/sample.pl

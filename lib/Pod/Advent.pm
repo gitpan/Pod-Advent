@@ -6,7 +6,7 @@ use base qw(Pod::Simple);
 use Perl::Tidy;
 use Text::Aspell;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 our @mode;
 our $section;
@@ -311,7 +311,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.09
+Version 0.10
 
 =head1 GETTING STARTED
 
