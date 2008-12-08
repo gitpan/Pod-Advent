@@ -1,5 +1,26 @@
 Revision history for Pod-Advent
 
+0.11    2008-12-08
+        * parse_file() now does a chdir to the .pod's directory.  This is so
+          that it can find =sourcedcode files specified relative to the .pod
+          file.  Makes testing easier -- don't have to chdir('ex/'). Also
+          safe, because by convention the .pod/sourced .pl's/.pm's should be
+          in a directory together.
+        * updated tests to remove chdir's
+        * added Cwd and File::Basename as prereqs
+        * Changed tests that compare large HTML chunks to use Test::Differences::eq_or_diff instead of Test::More::is
+        * add Test::Differences as a prereq
+        * removed IO::Scalar as a prereq; changed t/snippets.t to use
+          the ->parse_string_document method inherited from Pod::Simple.
+        * added pod re: html passing through
+        * added new pod re: footnotes
+        * Refactored the use of footnotes.  now auto-numbers them.  see POD.
+        * updated examples and tests for footnote changes
+        * Added ex/footnotes.pod and ex/footnotes.html
+        * Changed M<> behavior to link to http://search.cpan.org/perldoc?Foo::Bar
+        * Consolidated t/pod2advent-[ABC].t to a new t/pod2advent.t
+        * Consolidated t/sample.t and t.getting_started.t to a new t/examples.t
+
 0.10    2008-12-05
         * fixed typos in display-spelling-errors part of pod2advent
         * added t/pod2advent-A.t, t/pod2advent-B.t, and t/pod2advent-C.t

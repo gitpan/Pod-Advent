@@ -9,20 +9,19 @@ t/pod-coverage.t
 t/pod.t
 t/boilerplate.t
 t/general.t
-t/sample.t
-t/getting_started.t
+t/examples.t
 t/attributes.t
 t/packagevars.t
 t/snippets.t
 t/spellcheck.t
-t/pod2advent-A.t
-t/pod2advent-B.t
-t/pod2advent-C.t
+t/pod2advent.t
 ex/sample.pod
 ex/sample.html
 ex/sample.pl
 ex/getting_started.pod
 ex/getting_started.html
+ex/footnotes.pod
+ex/footnotes.html
 style.css
 docs/coverage.txt
 META.yml                                 Module meta-data (added by MakeMaker)

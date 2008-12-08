@@ -4,8 +4,7 @@ use strict;
 use warnings;
 use Test::More tests => 23;
 use Pod::Advent;
-use IO::Scalar;
-
+use IO::CaptureOutput qw(capture);
 
 sub test_snippet {
   my $desc     = shift;
@@ -16,9 +15,7 @@ sub test_snippet {
   my $ADVENT = Pod::Advent->new;
   $Pod::Advent::BODY_ONLY = 1;
   $ADVENT->output_string( \$s );
-  $pod = "=pod\n\n$pod\n\n=cut";
-  my $SH = new IO::Scalar \$pod;
-  $ADVENT->parse_file( $SH );
+  $ADVENT->parse_string_document("=pod\n\n" . $pod . "\n\n=cut");
   is( $s, $expected.($no_extra_newline?'':"\n"), $desc );
 }
 
@@ -28,8 +25,7 @@ test_snippet 'italics line', 'This is a I<test>.', '<p>This is a <span style="fo
 
 test_snippet 'A<url>', 'A<http://example.com>', '<p><tt><a href="http://example.com">http://example.com</a></tt></p>';
 test_snippet 'A<url|desc>', 'A<http://example.com|stuff>', '<p><tt><a href="http://example.com">stuff</a></tt></p>';
-test_snippet 'M<Module::Name>', 'M<Foo::Bar>', '<p><tt><a href="http://search.cpan.org/search?module=Foo::Bar">Foo::Bar</a></tt></p>';
-test_snippet 'N<#>', 'N<3>', '<p><sup><a href="#footnote3">3</a></sup></p>';
+test_snippet 'M<Module::Name>', 'M<Foo::Bar>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar">Foo::Bar</a></tt></p>';
 
 test_snippet 'L<>', 'L<test>', '<p><tt><a href="test">test</a></tt></p>';
 test_snippet 'F<>', 'F<test>', '<p><tt>test</tt></p>';
@@ -61,4 +57,6 @@ test_snippet 'head1b', qq{=head1 foo\n\nbar}, qq{<h1>foo</h1>\n<p>bar</p>};
 test_snippet 'head2', qq{=head2 foo}, q{<h2>foo</h2>};
 test_snippet 'head3', qq{=head3 foo}, q{<h3>foo</h3>};
 test_snippet 'head4', qq{=head4 foo}, q{<h4>foo</h4>};
+
+test_snippet 'html', q{foo<b>bar</b><i>stuff</i>}, q{<p>foo<b>bar</b><i>stuff</i></p>};
 

@@ -5,8 +5,10 @@ use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
 use Text::Aspell;
+use Cwd;
+use File::Basename();
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 our @mode;
 our $section;
@@ -16,6 +18,7 @@ our %M_values_seen;
 our $BODY_ONLY;
 our $speller;
 our @misspelled;
+our %footnotes;
 
 __PACKAGE__->__reset();
 
@@ -53,8 +56,7 @@ sub new {
   $self->accept_codes( qw/A M N/ );
   $self->accept_targets_as_text( qw/advent_title advent_author advent_year advent_day/ );
   $self->accept_targets( qw/code codeNNN pre/ );
-  $self->accept_targets_as_text( qw/quote eds/ );
-#  $self->accept_targets_as_text( map { "footnote$_" } 1 .. 25 );
+  $self->accept_targets_as_text( qw/quote eds footnote/ );
   $self->accept_directive_as_data('sourcedcode');
   $self->__reset();
   return $self;
@@ -70,8 +72,16 @@ sub css_url {
 
 sub parse_file {
   my $self = shift;
-  $data{file} = $_[0] if ! ref($_[0]);  # if it's a scalar, meaning a filename
-  $self = $self->SUPER::parse_file(@_);
+  my $filename = shift;
+  my $cwd = getcwd();
+  if( ! ref($filename) ){ # if it's a scalar, meaning a filename
+    my( $f, $d) = File::Basename::fileparse($filename);
+    $data{file} = $f;
+    $filename = $f;
+    chdir $d;
+  }
+  $self = $self->SUPER::parse_file($filename, @_);
+  chdir $cwd;
 }
 
 sub add {
@@ -97,6 +107,8 @@ sub _handle_element_start {
     $parser->add('<h3>');
   }elsif( $element_name eq 'head4' ){
     $parser->add('<h4>');
+  }elsif( $element_name eq 'Para' && ($mode[-2]||'') eq 'footnote' ){
+    # nothing
   }elsif( $element_name eq 'Para' && ($mode[-2]||'') ne 'for' ){
     $parser->add('<p>');
   }elsif( $element_name eq 'L' ){
@@ -115,6 +127,11 @@ sub _handle_element_start {
     $parser->add('<span style="font-weight: bold">');
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} =~ /^advent_(\w+)$/ ){
     $section = $1;
+  }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'footnote' ){
+    $mode[-1] = $attr_hash_r->{target};
+    $section = $attr_hash_r->{title};
+    my $n = delete $footnotes{$section} or die "footnote '$section' is not referenced.";
+    $parser->add( sprintf '<p><a name="footnote_%s" id="footnote_%s"></a>%d. ', $section, $section, $n);
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} =~ /^quote|eds$/ ){
     $mode[-1] = $attr_hash_r->{target};
     $parser->add('<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee">');
@@ -127,6 +144,7 @@ sub _handle_element_end {
   my($parser, $element_name) = @_;
   my $mode = pop @mode;
   if( $element_name eq 'Document' ){
+    die "footnote '$_' is not defined" for keys %footnotes;
     my $fmt = <<'EOF';
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -171,11 +189,17 @@ EOF
   }elsif( $element_name eq 'head4' ){
     $parser->add('</h4>');
     $parser->nl;
+  }elsif( $element_name eq 'Para' && ($mode[-1]||'') eq 'footnote' ){
+    $parser->add('<br>');
+    $parser->nl;
   }elsif( $element_name eq 'Para' && ($mode[-1]||'') ne 'for' ){
     $parser->add('</p>');
     $parser->nl;
   }elsif( $element_name eq 'for' && $mode =~ /^quote|eds$/ ){
     $parser->add('</blockquote>');
+    $parser->nl;
+  }elsif( $element_name eq 'for' && $mode eq 'footnote' ){
+    $parser->add('</p>');
     $parser->nl;
   }elsif( $element_name eq 'for' && $section =~ /^code|codeNNN$/ ){
     my $s;
@@ -236,9 +260,10 @@ sub _handle_text {
     $s =~ s#^<pre>\s*(.*?)\s*</pre>$#$1#si;
     $out .= $s;
   }elsif( $mode eq 'N' ){
-    $out .= sprintf '<sup><a href="#footnote%s">%s</a></sup>', $text, $text;
+    die "footnote '$text' is already referenced" if exists $footnotes{$text};
+    $footnotes{$text} = 1 + scalar keys %footnotes;
+    $out .= sprintf '<sup><a href="#footnote_%s">%s</a></sup>', $text, $footnotes{$text};
   }elsif( $mode eq 'sourcedcode' ){
-#    $section = $mode;
     die "bad filename '$text'" unless -r $text;
     $blocks{sourced_file} = $text;
     $out .= sprintf '<a name="%s" id="%s"></a><h2><a href="%s">%s</a></h2>', ($text)x4;
@@ -249,12 +274,11 @@ sub _handle_text {
         argv              => [qw/-html -pre -nnn/],
     );
     $out .= $s;
-#  }elsif( $mode =~ /^footnote/ ){
-#    $data{$section} .= $text;
   }elsif( $mode eq 'Para' && $section ){
     $data{$section} = $text;
     $section = '';
     $parser->__spellcheck($text);
+    $out .= $text if $mode[-2] eq 'footnote';
   }elsif( $mode eq 'A' ){
     my ($href, $text) = split /\|/, $text, 2;
     $text = $href unless defined $text;
@@ -264,7 +288,7 @@ sub _handle_text {
     if( $M_values_seen{$text}++ ){
       $parser->add($text);
     }else{
-      $parser->add( sprintf('<a href="http://search.cpan.org/search?module=%s">%s</a>',$text,$text) );
+      $parser->add( sprintf('<a href="http://search.cpan.org/perldoc?%s">%s</a>',$text,$text) );
     }
   }elsif( $mode eq 'Data' && $section ){
     $blocks{$section} .= $text . "\n\n";
@@ -311,7 +335,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.10
+Version 0.11
 
 =head1 GETTING STARTED
 
@@ -365,6 +389,13 @@ See F<ex/sample.pod> and F<ex/sample.html> in the distribution for a fuller exam
 
 =head1 SUPPORTED POD
 
+General note: HTML code in the pod source will be left alone, so it's effectively passed through. For example, these two lines are identical:
+
+    B<blah>
+    <b>blah</b>
+
+This being POD, the former should be used.  Where the html is useful is more for things w/o POD equivalents, like HTML encoding and writing C<&amp;>, C<&hellip;>, C<&mdash;>, etc or using E<lt>BRE<gt>'s, E<lt>HRE<gt>'s, etc, or including images, etc.
+
 =head2 Custom Codes
 
 =head3 AE<lt>E<gt>
@@ -376,7 +407,7 @@ This is because POD doesn't support the case of LE<lt>http://example.com|Example
 
 =head3 ME<lt>E<gt>
 
-This is intended for module names. The first instance, it will <tt> it and hyperlink it to a F<http://search.cpan.org/search?module=> url. All following instances will just <tt> it. Being just for module searches, any other searches can simply use the AE<lt>E<gt> code instead.
+This is intended for module names. The first instance, it will <tt> it and hyperlink it to a F<http://search.cpan.org/perldoc?> url. All following instances will just <tt> it. Being just for module searches, any other searches can simply use the AE<lt>E<gt> code instead.
 
   M<Pod::Simple>
   A<http://search.cpan.org/search?query=Pod::Simple::Subclassing|Pod::Simple::Subclassing>
@@ -384,12 +415,7 @@ This is intended for module names. The first instance, it will <tt> it and hyper
 
 =head3 NE<lt>E<gt>
 
-Insert a superscript footnote reference. It will link to a #footnoteN anchor.
-
-  In this entry we talk about XYZ.N<3>
-  ...
-  <a name="footnote3" id="footnote3"></a>3.
-  Some footnote about XYZ.
+Insert a superscript footnote reference. See L<"Footnotes">.
 
 =head2 Custom Directives
 
@@ -475,6 +501,28 @@ Currently behaves exactly the same as L<quote>.
     -- the management
   =end eds
 
+=head3 footnote
+
+Define a footnote's content. See L<"Footnotes">.
+
+=head2 Footnotes
+
+A footnote consists of a pair of elements -- one is the L<"NE<lt>E<gt>"> code and one is the L<"footnote"> target. They are each pass a common identifier for the footnote.  This way the author doesn't have to keep track of the numbering.
+
+  In this entry we talk about XYZ.N<foo>
+
+  ...
+
+  =begin footnote foo
+
+  The interesting thing about this is B<bar>.
+
+  =end footnote
+
+Note that the identifier is used for an anchor name (C<#footnote_foo>), so it must be C</^\w+$/>.
+
+The reference will appear as a superscript number.  The first instance of L<"NE<lt>E<gt>"> will be C<1>, the next C<2>, and so on.
+
 =head2 Standard Codes
 
 =head3 LE<lt>E<gt>
@@ -505,11 +553,11 @@ Expected behavior (N=1..4): uses E<lt>headNE<gt>
 
 =head1 TODO
 
+have tests use Test::Differences for comparing output to expected .html contents. Will provide much cleaner test feedback on errors.
+
 make Text::Aspell usage optional (in case it isn't or can't be installed); add a --spellcheck option (default on) ..  and  warn cleanly if trying to sepllcheck and can't load Text::Aspell
 
-resposition the 'View Source (POD)' link?
-
-pod2advent for stylesheet
+reposition the 'View Source (POD)' link?
 
 pod2advent option to generate template (basically cat ex/getting_started.pod)
 
@@ -521,19 +569,13 @@ ability to force html encoding? (see 0.07 changelog entry re: you're)
 
 more tests
 
-create test for bin/pod2advent
-
 create test for output_fh not being set
 
 test w/more complicated perl samples, for differences in Perl::Tidy versions.
 
 code refactoring (package var usage; also maybe make code/directive behavior based on a config data structure)
 
-footnotes
-
 support for =over/=item
-
-docs re: html passing through
 
 check html output for validity
 
@@ -550,6 +592,8 @@ Constructor.  See L<Pod::Simple>.
 =head2 parse_file
 
 Overloaded from Pod::Simple -- if input is a filename, will add a link to it at the bottom of the generated HTML.
+
+Also, if input is a filename, it will chdir to the filename's directory before parsing the file.  Thus any files referenced (e.g. in a L<"sourcedcode"> tag) are expected to be relative to the .pod file itself.
 
 =head2 css_url
 

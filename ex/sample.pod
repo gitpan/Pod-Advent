@@ -25,7 +25,7 @@ Now we talk about a F<data.txt> file.
 And our copy of L<data.txt>.
 And a plain A<http://www.example.com> a/href.
 
-And some foot-noted text.N<1>
+And some foot-noted text.N<f1>
 
 =head1 BIG Header (1)
 
@@ -39,7 +39,7 @@ And some foot-noted text.N<1>
 
 Regular B<bold> and I<italics> work too.
 
-And inline code such as this C<my $foo=Bar-E<gt>new()> snippet.
+And in-line code such as this C<my $foo=Bar-E<gt>new()> snippet.
 
 And regular pod Verbatim is treated as code:
 
@@ -78,6 +78,8 @@ And code sourced from the L<sample.pl> file:
 
 And just &lt;pre&gt; tag stuff, e.g. for output or data.
 
+mispelling example. repeating mispelling.
+
 =begin pre
 
 This is just preformatted
@@ -99,5 +101,9 @@ Testing B<bold> and I<italics> and M<Foo::Bar> module link
 
 =end eds
 
-<a name="footnote1" id="footnote1"></a>1.
+=begin footnote f1
+
 This is the first footnote.
+
+=end footnote
+

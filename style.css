@@ -2,7 +2,7 @@
 body {background: #dcc; color: #000000}
 pre { color: #000000; 
       background: #9d9;
-      font-family: courier;
+      font-family: courier, monospace;
     } 
 
 .c  { color: #185018;} /* comment */

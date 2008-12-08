@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More tests => 25;
 use Pod::Advent;
+use Test::Differences;
 
 my $advent = Pod::Advent->new;
 
@@ -15,14 +16,15 @@ my $s;
 $advent->output_string( \$s );
 $advent->parse_file( \*DATA );
 
-is( $advent->num_spelling_errors, 18, "misspelled word ct" );
-is_deeply( [ $advent->spelling_errors ], [qw/
+is( $advent->num_spelling_errors, 20, "misspelled word ct" );
+eq_or_diff( [ $advent->spelling_errors ], [qw/
 	z1
 	z2
 	z3
 	z4
 	z5
 	z6
+	z3
 	z9
 	z15
 	z16
@@ -35,8 +37,8 @@ is_deeply( [ $advent->spelling_errors ], [qw/
 	z26
 	z27
 	z28
-/], "misspelled words" )
-	or diag join "\n", map { "\t$_" } $advent->spelling_errors;
+	z29
+/], "misspelled words" );
 
 $advent->__reset();
 is( $advent->num_spelling_errors, 0, "<reset> misspelled word ct" );
@@ -78,6 +80,7 @@ __DATA__
 =pod
 
 z1 word B<word z2> word I<z3> B<z4 I<z5> word z6>
+repeated z3
 
 A<http://example.z07.com>
 A<http://example.z08.com|z9>
@@ -131,5 +134,11 @@ z26
 =head4 z27
 
 z28
+
+=begin footnote z011
+
+Blah z29
+
+=end footnote
 
 =cut
