@@ -8,7 +8,7 @@ use Text::Aspell;
 use Cwd;
 use File::Basename();
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 our @mode;
 our $section;
@@ -335,7 +335,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.11
+Version 0.12
 
 =head1 GETTING STARTED
 
@@ -552,8 +552,6 @@ Normal behavior: uses E<lt>BE<gt>
 Expected behavior (N=1..4): uses E<lt>headNE<gt>
 
 =head1 TODO
-
-have tests use Test::Differences for comparing output to expected .html contents. Will provide much cleaner test feedback on errors.
 
 make Text::Aspell usage optional (in case it isn't or can't be installed); add a --spellcheck option (default on) ..  and  warn cleanly if trying to sepllcheck and can't load Text::Aspell
 

@@ -1,5 +1,16 @@
 Revision history for Pod-Advent
 
+0.12    2008-12-09
+        * Specified minimum version of Pod::Simple as 3.06 after seeing v3.05
+          break (Test Reports #2777258, #2779853) and verifying it. I believe
+          it's the 'feature to parse additional text after =begin target as a
+          block title' that Pod::Advent requires (for footnotes).
+        * Made t/pod2advent.t and t/examples.t handle fatal errors better.
+        * Makefile.PL -- changed 'use ExtUtils::MakeMaker' statement to
+          include min version. This supports non-configure_requires aware
+          tools; also ExtUtils::MakeMaker doesn't have a way to specify
+          configure_requires directly.
+
 0.11    2008-12-08
         * parse_file() now does a chdir to the .pod's directory.  This is so
           that it can find =sourcedcode files specified relative to the .pod

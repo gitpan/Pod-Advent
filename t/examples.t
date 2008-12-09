@@ -20,7 +20,9 @@ foreach my $info ( @files ){
   my ($stdout, $stderr);
   my $advent = Pod::Advent->new;
   capture( sub {
+	eval {
 	$advent->parse_file( $podfile );
+	} or warn $@;
     }, \$stdout, \$stderr );
 
   my $html = do{ local $/ = undef; open FILE, '<', $htmlfile; <FILE> };

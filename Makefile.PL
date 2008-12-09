@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use 5.006;
-use ExtUtils::MakeMaker;
+use ExtUtils::MakeMaker 6.48;
 
 WriteMakefile(
     NAME                => 'Pod::Advent',
@@ -12,7 +12,7 @@ WriteMakefile(
     PREREQ_PM => {
 					# {newest as of 12/2008; should eventually become min vers}
         'Test::More' => 0,		#	0.86
-	'Pod::Simple' => 0,		#	3.07
+	'Pod::Simple' => 3.06,		# Need 'feature to parse additional text after =begin target as a block title' added in v3.06
 	'Perl::Tidy' => 0,		#	20071205
 	'Text::Aspell' => 0,		#	0.09
 	'IO::CaptureOutput' => 0,	#	1.1
