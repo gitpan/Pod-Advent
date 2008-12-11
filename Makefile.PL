@@ -6,6 +6,7 @@ use ExtUtils::MakeMaker 6.48;
 WriteMakefile(
     NAME                => 'Pod::Advent',
     AUTHOR              => 'David Westbrook <dwestbrook@gmail.com>',
+    LICENSE             => 'perl',
     VERSION_FROM        => 'lib/Pod/Advent.pm',
     ABSTRACT_FROM       => 'lib/Pod/Advent.pm',
     EXE_FILES           => [ 'bin/pod2advent' ],
@@ -13,7 +14,7 @@ WriteMakefile(
 					# {newest as of 12/2008; should eventually become min vers}
         'Test::More' => 0,		#	0.86
 	'Pod::Simple' => 3.06,		# Need 'feature to parse additional text after =begin target as a block title' added in v3.06
-	'Perl::Tidy' => 0,		#	20071205
+	'Perl::Tidy' => 20030726,	#	20021130 fails
 	'Text::Aspell' => 0,		#	0.09
 	'IO::CaptureOutput' => 0,	#	1.1
 	'File::Basename' => 0,		#	2.74

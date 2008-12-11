@@ -141,4 +141,6 @@ Blah z29
 
 =end footnote
 
+Some D<block of z030 exempt from spellcheck>
+
 =cut

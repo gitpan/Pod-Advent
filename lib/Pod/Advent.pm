@@ -8,7 +8,7 @@ use Text::Aspell;
 use Cwd;
 use File::Basename();
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 our @mode;
 our $section;
@@ -48,12 +48,13 @@ sub __reset(){
   $speller = Text::Aspell->new;
   $speller->set_option('lang','en_US');
   @misspelled = ();
+  %footnotes = ();
 }
 
 sub new {
   my $self = shift;
   $self = $self->SUPER::new(@_);
-  $self->accept_codes( qw/A M N/ );
+  $self->accept_codes( qw/A D M N P/ );
   $self->accept_targets_as_text( qw/advent_title advent_author advent_year advent_day/ );
   $self->accept_targets( qw/code codeNNN pre/ );
   $self->accept_targets_as_text( qw/quote eds footnote/ );
@@ -263,6 +264,10 @@ sub _handle_text {
     die "footnote '$text' is already referenced" if exists $footnotes{$text};
     $footnotes{$text} = 1 + scalar keys %footnotes;
     $out .= sprintf '<sup><a href="#footnote_%s">%s</a></sup>', $text, $footnotes{$text};
+  }elsif( $mode eq 'P' ){
+    my ($year, $day) = split '-', $text, 2;
+    die "invalid date from P<$text>" unless $year =~ /^200[0-8]$/ && 1 <= $day && $day <= 25;
+    $out .= sprintf '<tt><a href="http://www.perladvent.org/%d/%d">%d/%02d</a></tt>', $year, $day, $year, $day;
   }elsif( $mode eq 'sourcedcode' ){
     die "bad filename '$text'" unless -r $text;
     $blocks{sourced_file} = $text;
@@ -292,10 +297,14 @@ sub _handle_text {
     }
   }elsif( $mode eq 'Data' && $section ){
     $blocks{$section} .= $text . "\n\n";
+  }elsif( $mode eq 'F' ){
+    $out .= $text;
+  }elsif( $mode eq 'L' ){
+    $out .= $text;
+  }elsif( $mode eq 'D' ){
+    $out .= $text;
   }else{
-    if( $mode !~ /^(F|L)$/ ){
-      $parser->__spellcheck($text);
-    }
+    $parser->__spellcheck($text);
     $out .= $text;
   }
   $parser->add( $out, undef );
@@ -335,7 +344,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.12
+Version 0.13
 
 =head1 GETTING STARTED
 
@@ -394,7 +403,11 @@ General note: HTML code in the pod source will be left alone, so it's effectivel
     B<blah>
     <b>blah</b>
 
-This being POD, the former should be used.  Where the html is useful is more for things w/o POD equivalents, like HTML encoding and writing C<&amp;>, C<&hellip;>, C<&mdash;>, etc or using E<lt>BRE<gt>'s, E<lt>HRE<gt>'s, etc, or including images, etc.
+This being POD, the former should be used.
+Where the html is useful is more for things w/o POD equivalents,
+like HTML encoding and writing C<&amp;>, C<&hellip;>, C<&mdash;>, etc
+or using E<lt>BRE<gt>'s, E<lt>HRE<gt>'s, etc,
+or including images, comments, etc.
 
 =head2 Custom Codes
 
@@ -416,6 +429,15 @@ This is intended for module names. The first instance, it will <tt> it and hyper
 =head3 NE<lt>E<gt>
 
 Insert a superscript footnote reference. See L<"Footnotes">.
+
+=head3 PE<lt>E<gt>
+
+Link to a B<P>ast Advent Calendar entry.  Syntax is I<E<lt>YYYY-DE<gt>>.
+
+=head3 DE<lt>E<gt>
+
+B<D>isables spellchecking for the contents, which can be a single word or a phrase (including other pod formatting).
+
 
 =head2 Custom Directives
 

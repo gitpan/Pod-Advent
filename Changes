@@ -1,5 +1,16 @@
 Revision history for Pod-Advent
 
+0.13    2008-12-11
+        * Makefile.PL - specified license as 'perl'.
+        * Makefile.PL - Specified min version of Perl::Tidy as 20030726 after
+          testing with backpan versions and seeing that 20021130 fails.
+        * Add new code P<> linking past entries in stanrard fashion.
+          Syntax: P<YYYY-DD>
+        * Add new code D<> assuming everything's in the Dictionary. Just
+          Disables spellchecking within the tag.
+        * t/snippets.t -- added P<> and D<> checks, and error handling checks
+          for footnotes.
+
 0.12    2008-12-09
         * Specified minimum version of Pod::Simple as 3.06 after seeing v3.05
           break (Test Reports #2777258, #2779853) and verifying it. I believe
