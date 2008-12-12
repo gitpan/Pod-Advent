@@ -2,6 +2,7 @@ Changes
 MANIFEST
 Makefile.PL
 README
+TODO
 lib/Pod/Advent.pm
 bin/pod2advent
 t/00-load.t
@@ -14,6 +15,7 @@ t/attributes.t
 t/packagevars.t
 t/snippets.t
 t/spellcheck.t
+t/spellcheck-off.t
 t/pod2advent.t
 ex/sample.pod
 ex/sample.html
@@ -23,5 +25,4 @@ ex/getting_started.html
 ex/footnotes.pod
 ex/footnotes.html
 style.css
-docs/coverage.txt
 META.yml                                 Module meta-data (added by MakeMaker)

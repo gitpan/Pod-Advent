@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 48;
+use Test::More tests => 55;
 use Pod::Advent;
 use IO::CaptureOutput qw(capture);
 
@@ -38,18 +38,18 @@ test_snippet 'bold line', 'This is a B<test>.', '<p>This is a <span style="font-
 
 test_snippet 'italics line', 'This is a I<test>.', '<p>This is a <span style="font-style: italic">test</span>.</p>';
 
-test_snippet 'A<url>', 'A<http://example.com>', '<p><tt><a href="http://example.com">http://example.com</a></tt></p>';
-test_snippet 'A<url|desc>', 'A<http://example.com|stuff>', '<p><tt><a href="http://example.com">stuff</a></tt></p>';
+test_snippet 'A<url>', 'A<http://example.com>', '<p><a href="http://example.com">http://example.com</a></p>';
+test_snippet 'A<url|desc>', 'A<http://example.com|stuff>', '<p><a href="http://example.com">stuff</a></p>';
 test_snippet 'M<Module::Name>', 'M<Foo::Bar>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar">Foo::Bar</a></tt></p>';
 
-test_snippet 'L<>', 'L<test>', '<p><tt><a href="test">test</a></tt></p>';
+test_snippet 'L<>', 'L<test>', '<p><a href="test">test</a></p>';
 test_snippet 'F<>', 'F<test>', '<p><tt>test</tt></p>';
-test_snippet 'C<>', 'C<test>', qq{<p><tt><span class="w">test</span>\n</tt></p>};
+test_snippet 'C<>', 'C<test>', qq{<p><tt><span class="w">test</span></tt></p>};
 test_snippet 'I<>', 'I<test>', '<p><span style="font-style: italic">test</span></p>';
 test_snippet 'B<>', 'B<test>', '<p><span style="font-weight: bold">test</span></p>';
 test_snippet 'B<I<>>', 'B<foo I<test> bar>', '<p><span style="font-weight: bold">foo <span style="font-style: italic">test</span> bar</span></p>';
-test_snippet 'P<>', 'P<2008-1>', '<p><tt><a href="http://www.perladvent.org/2008/1">2008/01</a></tt></p>';
-test_snippet 'P<>', 'P<2008-01>', '<p><tt><a href="http://www.perladvent.org/2008/1">2008/01</a></tt></p>';
+test_snippet 'P<>', 'P<2008-1>', '<p><a href="../../2008/1">2008/01</a></p>';
+test_snippet 'P<>', 'P<2008-01>', '<p><a href="../../2008/1">2008/01</a></p>';
 test_snippet 'D<>', 'D<test>', '<p>test</p>';
 test_snippet 'D<F<>>', 'D<foo F<test> bar>', '<p>foo <tt>test</tt> bar</p>';
 
@@ -78,7 +78,26 @@ test_snippet 'head2', qq{=head2 foo}, q{<h2>foo</h2>};
 test_snippet 'head3', qq{=head3 foo}, q{<h3>foo</h3>};
 test_snippet 'head4', qq{=head4 foo}, q{<h4>foo</h4>};
 
-test_snippet 'html', q{foo<b>bar</b><i>stuff</i>}, q{<p>foo<b>bar</b><i>stuff</i></p>};
+test_snippet 'html-b/i', q{foo<b>bar</b><i>stuff</i>}, q{<p>foo<b>bar</b><i>stuff</i></p>};
+
+test_snippet 'html-tt.1', q{<tt>CPANZ<></tt>}, q{<p><tt>CPAN</tt></p>};
+test_snippet 'html-tt.2', q{<tt>CPANE<lt>/tt>}, q{<p><tt>CPAN</tt></p>};
+
+test_snippet 'html-comment.1', qq{<!-- foo bar -->}, q{<p><!-- foo bar --></p>};
+test_snippet 'html-comment.2', qq{<!-- foo B<bar> -->}, q{<p><!-- foo <span style="font-weight: bold">bar</span> --></p>};
+test_snippet 'html-comment.3', qq{<!--\nfoo bar\n-->}, q{<p><!-- foo bar --></p>};
+
+TODO: {
+local $TODO = 'need to figure out how to do special treatment of html comments';
+test_snippet 'html-comment.4', qq{<!--\n\nfoo bar\n\n-->}, q{<p><!--
+<p>foo bar</p>
+--></p>
+}, 1;
+test_snippet 'html-comment.5', qq{<!-- more \n\nfoo bar\n\nstuff -->}, q{<p><!-- more
+<p>foo bar</p>
+stuff --></p>
+}, 1;
+}
 
 #####################################################
 

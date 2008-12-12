@@ -31,7 +31,10 @@ foreach my $info ( @files ){
   eq_or_diff($stdout, $html,   "[$podfile] file matches");
   eq_or_diff($stderr, $errors, "[$podfile] errors match");
 
-  is( $advent->num_spelling_errors, scalar(@$words), "[$podfile] misspelled word ct" );
-  eq_or_diff( [ $advent->spelling_errors ], $words, "[$podfile] misspelled words" );
+  SKIP: {
+    skip 'spellcheck disabled', 2 unless $advent->spellcheck_enabled;
+    is( $advent->num_spelling_errors, scalar(@$words), "[$podfile] misspelled word ct" );
+    eq_or_diff( [ $advent->spelling_errors ], $words, "[$podfile] misspelled words" );
+  }
 }
 

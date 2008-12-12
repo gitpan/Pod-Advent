@@ -4,11 +4,10 @@ use strict;
 use warnings;
 use base qw(Pod::Simple);
 use Perl::Tidy;
-use Text::Aspell;
 use Cwd;
 use File::Basename();
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 our @mode;
 our $section;
@@ -45,10 +44,20 @@ sub __reset(){
   );
   %M_values_seen = ();
   $BODY_ONLY = 0;
-  $speller = Text::Aspell->new;
-  $speller->set_option('lang','en_US');
+  $speller = undef;
+  eval {
+    require Text::Aspell;
+    $speller = Text::Aspell->new;
+    $speller->set_option('lang','en_US');
+  };
+  $self->spellcheck_enabled or warn "Couldn't load Text::Aspell -- spellchecking disabled.";
   @misspelled = ();
   %footnotes = ();
+}
+
+sub spellcheck_enabled {
+  my $self = shift;
+  return ref($speller) eq 'Text::Aspell' ? 1 : 0;
 }
 
 sub new {
@@ -108,14 +117,13 @@ sub _handle_element_start {
     $parser->add('<h3>');
   }elsif( $element_name eq 'head4' ){
     $parser->add('<h4>');
-  }elsif( $element_name eq 'Para' && ($mode[-2]||'') eq 'footnote' ){
+  }elsif( $element_name eq 'Para' && $mode[-2] eq 'footnote' ){
     # nothing
-  }elsif( $element_name eq 'Para' && ($mode[-2]||'') ne 'for' ){
+  }elsif( $element_name eq 'Para' && $mode[-2] ne 'for' ){
     $parser->add('<p>');
   }elsif( $element_name eq 'L' ){
-    $parser->add( sprintf('<tt><a href="%s">',$attr_hash_r->{to}) );
+    $parser->add( sprintf('<a href="%s">',$attr_hash_r->{to}) );
   }elsif( $element_name eq 'A' ){
-    $parser->add('<tt>');
   }elsif( $element_name eq 'M' ){
     $parser->add('<tt>');
   }elsif( $element_name eq 'F' ){
@@ -133,10 +141,17 @@ sub _handle_element_start {
     $section = $attr_hash_r->{title};
     my $n = delete $footnotes{$section} or die "footnote '$section' is not referenced.";
     $parser->add( sprintf '<p><a name="footnote_%s" id="footnote_%s"></a>%d. ', $section, $section, $n);
-  }elsif( $element_name eq 'for' && $attr_hash_r->{target} =~ /^quote|eds$/ ){
+  }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'quote' ){
     $mode[-1] = $attr_hash_r->{target};
     $parser->add('<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee">');
-  }elsif( $element_name eq 'for' && $attr_hash_r->{target} =~ /^code|codeNNN|pre$/ ){
+  }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'eds' ){
+    $mode[-1] = $attr_hash_r->{target};
+    $parser->add('<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee">');
+  }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'code' ){
+    $section = $attr_hash_r->{target};
+  }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'codeNNN' ){
+    $section = $attr_hash_r->{target};
+  }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'pre' ){
     $section = $attr_hash_r->{target};
   }
 }
@@ -190,19 +205,22 @@ EOF
   }elsif( $element_name eq 'head4' ){
     $parser->add('</h4>');
     $parser->nl;
-  }elsif( $element_name eq 'Para' && ($mode[-1]||'') eq 'footnote' ){
+  }elsif( $element_name eq 'Para' && $mode[-1] eq 'footnote' ){
     $parser->add('<br>');
     $parser->nl;
-  }elsif( $element_name eq 'Para' && ($mode[-1]||'') ne 'for' ){
+  }elsif( $element_name eq 'Para' && $mode[-1] ne 'for' ){
     $parser->add('</p>');
     $parser->nl;
-  }elsif( $element_name eq 'for' && $mode =~ /^quote|eds$/ ){
+  }elsif( $element_name eq 'for' && $mode eq 'quote' ){
+    $parser->add('</blockquote>');
+    $parser->nl;
+  }elsif( $element_name eq 'for' && $mode eq 'eds' ){
     $parser->add('</blockquote>');
     $parser->nl;
   }elsif( $element_name eq 'for' && $mode eq 'footnote' ){
     $parser->add('</p>');
     $parser->nl;
-  }elsif( $element_name eq 'for' && $section =~ /^code|codeNNN$/ ){
+  }elsif( $element_name eq 'for' && ($section eq 'code' || $section eq 'codeNNN') ){
     my $s;
     $blocks{$section} =~ s/\s+$//;
     Perl::Tidy::perltidy(
@@ -223,11 +241,10 @@ EOF
     $blocks{$section} = '';
     $section = '';
   }elsif( $element_name eq 'L' ){
-    $parser->add('</a></tt>');
+    $parser->add('</a>');
   }elsif( $element_name eq 'M' ){
     $parser->add('</tt>');
   }elsif( $element_name eq 'A' ){
-    $parser->add('</tt>');
   }elsif( $element_name eq 'F' ){
     $parser->add('</tt>');
   }elsif( $element_name eq 'C' ){
@@ -258,7 +275,7 @@ sub _handle_text {
         destination       => \$s,
         argv              => [qw/-html -pre/],
     );
-    $s =~ s#^<pre>\s*(.*?)\s*</pre>$#$1#si;
+    $s =~ s#^<pre>\s*(.*?)\s*</pre>\s*$#$1#si;
     $out .= $s;
   }elsif( $mode eq 'N' ){
     die "footnote '$text' is already referenced" if exists $footnotes{$text};
@@ -267,7 +284,7 @@ sub _handle_text {
   }elsif( $mode eq 'P' ){
     my ($year, $day) = split '-', $text, 2;
     die "invalid date from P<$text>" unless $year =~ /^200[0-8]$/ && 1 <= $day && $day <= 25;
-    $out .= sprintf '<tt><a href="http://www.perladvent.org/%d/%d">%d/%02d</a></tt>', $year, $day, $year, $day;
+    $out .= sprintf '<a href="../../%d/%d">%d/%02d</a>', $year, $day, $year, $day;
   }elsif( $mode eq 'sourcedcode' ){
     die "bad filename '$text'" unless -r $text;
     $blocks{sourced_file} = $text;
@@ -313,6 +330,7 @@ sub _handle_text {
 sub __spellcheck {
   my $parser = shift;
   my $text = shift;
+  return unless $parser->spellcheck_enabled;
   my $bad_ct = 0;
   foreach my $word (  split /\W+/, $text ){
     next if $speller->check( $word ) || $word =~ /^\d+$/;
@@ -344,7 +362,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.13
+Version 0.14
 
 =head1 GETTING STARTED
 
@@ -408,6 +426,7 @@ Where the html is useful is more for things w/o POD equivalents,
 like HTML encoding and writing C<&amp;>, C<&hellip;>, C<&mdash;>, etc
 or using E<lt>BRE<gt>'s, E<lt>HRE<gt>'s, etc,
 or including images, comments, etc.
+Be aware that you may need to use the C<ZE<lt>E<gt>> pod code to prevent some cases of html use from being interpreted as POD.
 
 =head2 Custom Codes
 
@@ -573,34 +592,6 @@ Normal behavior: uses E<lt>BE<gt>
 
 Expected behavior (N=1..4): uses E<lt>headNE<gt>
 
-=head1 TODO
-
-make Text::Aspell usage optional (in case it isn't or can't be installed); add a --spellcheck option (default on) ..  and  warn cleanly if trying to sepllcheck and can't load Text::Aspell
-
-reposition the 'View Source (POD)' link?
-
-pod2advent option to generate template (basically cat ex/getting_started.pod)
-
-pod2advent option to generate css (basically cat style.css)
-
-pod2advent option for 'POD' link vs rel=alternate tag
-
-ability to force html encoding? (see 0.07 changelog entry re: you're)
-
-more tests
-
-create test for output_fh not being set
-
-test w/more complicated perl samples, for differences in Perl::Tidy versions.
-
-code refactoring (package var usage; also maybe make code/directive behavior based on a config data structure)
-
-support for =over/=item
-
-check html output for validity
-
-custom podchecker (and/or subclass of Pod::Checker)
-
 =head1 METHODS
 
 See L<Pod::Simple> for all of the inherited methods.  Also see L<Pod::Simple::Subclassing> for more information.
@@ -618,6 +609,10 @@ Also, if input is a filename, it will chdir to the filename's directory before p
 =head2 css_url
 
 Accessor/mutator for the stylesheet to use.  Defaults to F<../style.css>
+
+=head2 spellcheck_enabled
+
+Returns a boolean of whether or not spellchecking will be done (depends on presence of L<Text::Aspell>).
 
 =head2 num_spelling_errors
 

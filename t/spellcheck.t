@@ -2,14 +2,21 @@
 
 use strict;
 use warnings;
-use Test::More tests => 25;
+use Test::More;
 use Pod::Advent;
 use Test::Differences;
 
+eval "use Text::Aspell";
+plan skip_all => "Text::Aspell required for testing spellcheck" if $@;
+
+plan tests => 26;
+
 my $advent = Pod::Advent->new;
 
-ok( $Pod::Advent::speller, "got speller" );
+ok( $Pod::Advent::speller, "got speller" )
+  or exit;
 isa_ok( $Pod::Advent::speller, 'Text::Aspell', "got Text::Aspell" );
+is( $advent->spellcheck_enabled, 1, "spellcheck enabled" );
 is( $Pod::Advent::speller->get_option('lang'), 'en_US', "en_US dictionary" );
 
 my $s;

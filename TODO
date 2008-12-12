@@ -1,0 +1,65 @@
+#########################
+#        TODO           #
+#                       #
+# (no particular order) #
+#########################
+
+document that, although Makefile.PL complains, module runs fine w/o Text::Aspell.
+
+reposition the 'View Source (POD)' link?
+
+pod2advent --spellcheck option (default on) ..  and  warn cleanly if trying to sepllcheck and can't load Text::Aspell
+
+pod2advent option to generate template (basically cat ex/getting_started.pod)
+
+pod2advent option to generate css (basically cat style.css)
+
+pod2advent option for 'POD' link vs rel=alternate tag
+
+ability to force html encoding? (see 0.07 changelog entry re: you're)
+
+more tests
+
+test w/more complicated perl samples, for differences in Perl::Tidy versions.
+
+code refactoring (package var usage; also maybe make code/directive behavior based on a config data structure)
+
+support for =over/=item
+
+check html output for validity
+
+custom podchecker (and/or subclass of Pod::Checker)
+
+------------------
+Items from Jerrad:
+------------------
+
+Wish: P<> should support |Name syntax, since linking by name, rather than
+mention the name and linking the date is also/traditionally done.
+
+Query: So what does P<> buy us over A<>, other than semantic mark-up?
+
+WISH: better comment support: #lines, and extracting whole <!-- --> clause,
+rather than passing it through and hoping the browser parses results correctly.
+  ==> See TODO test cases in t/snippets.t
+
+
+##############
+COVERAGE STATS
+##############
+
+*** v0.14 ***
+---------------------------- ------ ------ ------ ------ ------ ------ ------
+File                           stmt   bran   cond    sub    pod   time  total
+---------------------------- ------ ------ ------ ------ ------ ------ ------
+bin/pod2advent                100.0  100.0    n/a  100.0    n/a    0.1  100.0	#  26/26
+blib/lib/Pod/Advent.pm        100.0  100.0   97.1  100.0  100.0   99.9   99.5	# 437/439
+Total                         100.0  100.0   97.1  100.0  100.0  100.0   99.6	# 463/465
+---------------------------- ------ ------ ------ ------ ------ ------ ------
+
+export HARNESS_PERL_SWITCHES=-MDevel::Cover=+ignore,Errno.pm
+cover -delete
+make test
+cover
+chmod go+rx cover_db
+

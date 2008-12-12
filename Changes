@@ -1,5 +1,18 @@
 Revision history for Pod-Advent
 
+0.14    2008-12-11
+        * Cleanly handle absence of Text::Aspell -- now gives a warning. Also
+          updated test suite (skips certain tests if no spellcheck).  Left
+          the prereq in Makefile.PL to warn users.
+        * Added a ->spellcheck_enabled() method.
+        * Combined docs/coverage.txt and pod TODO section into a TODO file.
+        * Removed <tt> formatting from A<>, L<>, and P<>.
+        * P<> now creates relative links (per Bill -- for mirrors)
+        * Added TODO test cases in t/snippets.t for html comment handling.
+        * Minor coverage-motivated tweaks. Coverage is at new high of 99.6%
+        * Removed extraneous newline before </tt> in C<> output (per Jerrad:
+          this can result in bad rendering in firefox).
+
 0.13    2008-12-11
         * Makefile.PL - specified license as 'perl'.
         * Makefile.PL - Specified min version of Perl::Tidy as 20030726 after
