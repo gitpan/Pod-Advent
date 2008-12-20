@@ -1,5 +1,14 @@
 Revision history for Pod-Advent
 
+0.15    2008-12-20
+        * Support YYYY-12-DD for P<> (jerrad)
+        * Support |Name syntax for P<> (jerrad)
+        * updated pod and t/snippets.t for P<>
+        * pod2advent - added special filename of '-' to mean read from STDIN.
+        * pod2advent - added special filename of '+' to mean read a *snippet* from STDIN.
+        * updated t/pod2advent.t and pod2advent pod for syntax additions.
+        * removed hard-coded style from <blockquote> -- rely on css.
+
 0.14    2008-12-11
         * Cleanly handle absence of Text::Aspell -- now gives a warning. Also
           updated test suite (skips certain tests if no spellcheck).  Left
@@ -7,7 +16,7 @@ Revision history for Pod-Advent
         * Added a ->spellcheck_enabled() method.
         * Combined docs/coverage.txt and pod TODO section into a TODO file.
         * Removed <tt> formatting from A<>, L<>, and P<>.
-        * P<> now creates relative links (per Bill -- for mirrors)
+        * P<> now creates relative links (per Jerrad -- for mirrors)
         * Added TODO test cases in t/snippets.t for html comment handling.
         * Minor coverage-motivated tweaks. Coverage is at new high of 99.6%
         * Removed extraneous newline before </tt> in C<> output (per Jerrad:

@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 55;
+use Test::More tests => 70;
 use Pod::Advent;
 use IO::CaptureOutput qw(capture);
 
@@ -31,7 +31,7 @@ sub test_error {
     $ADVENT->parse_string_document("=pod\n\n" . $pod . "\n\n=cut");
   };
   is( $rc, undef, "{error checking} $desc - got undef" );
-  like( $@, qr/^$expected\n$/, "{erorr checking} $desc - got error" );
+  like( $@, qr/^$expected\n$/, "{error checking} $desc - got error" );
 }
 
 test_snippet 'bold line', 'This is a B<test>.', '<p>This is a <span style="font-weight: bold">test</span>.</p>';
@@ -48,8 +48,11 @@ test_snippet 'C<>', 'C<test>', qq{<p><tt><span class="w">test</span></tt></p>};
 test_snippet 'I<>', 'I<test>', '<p><span style="font-style: italic">test</span></p>';
 test_snippet 'B<>', 'B<test>', '<p><span style="font-weight: bold">test</span></p>';
 test_snippet 'B<I<>>', 'B<foo I<test> bar>', '<p><span style="font-weight: bold">foo <span style="font-style: italic">test</span> bar</span></p>';
-test_snippet 'P<>', 'P<2008-1>', '<p><a href="../../2008/1">2008/01</a></p>';
-test_snippet 'P<>', 'P<2008-01>', '<p><a href="../../2008/1">2008/01</a></p>';
+test_snippet 'P<> a', 'P<2008-1>', '<p><a href="../../2008/1/">2008/1</a></p>';
+test_snippet 'P<> b', 'P<2008-1|One>', '<p><a href="../../2008/1/">One</a></p>';
+test_snippet 'P<> c', 'P<2008-12-1>', '<p><a href="../../2008/1/">2008/1</a></p>';
+test_snippet 'P<> d', 'P<2008-12-1|One>', '<p><a href="../../2008/1/">One</a></p>';
+test_snippet 'P<> e', 'P<2008-01>', '<p><a href="../../2008/1/">2008/1</a></p>';
 test_snippet 'D<>', 'D<test>', '<p>test</p>';
 test_snippet 'D<F<>>', 'D<foo F<test> bar>', '<p>foo <tt>test</tt> bar</p>';
 
@@ -62,10 +65,10 @@ test_snippet 'codeNNN', qq{=begin codeNNN\n\nfoo\n\n=end codeNNN}, q{<pre>
 </pre>
 };
 test_snippet 'pre', qq{=begin pre\n\nfoo\n\n=end pre}, q{<pre><span class="c">foo</span></pre>};
-test_snippet 'quote', qq{=begin quote\n\nfoo\n\n=end quote}, q{<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee"><p>foo</p>
+test_snippet 'quote', qq{=begin quote\n\nfoo\n\n=end quote}, q{<blockquote><p>foo</p>
 </blockquote>
 }, 1;
-test_snippet 'eds', qq{=begin eds\n\nfoo\n\n=end eds}, q{<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee"><p>foo</p>
+test_snippet 'eds', qq{=begin eds\n\nfoo\n\n=end eds}, q{<blockquote><p>foo</p>
 </blockquote>
 }, 1;
 
@@ -101,8 +104,22 @@ stuff --></p>
 
 #####################################################
 
-foreach my $s ( qw{ 2008-X 208-1 2008 foo 2008/1 2009-1 2007-50 } ){
-  test_error "P<$s>", "P<$s>", qr{invalid date from P<$s> at .*?lib/Pod/Advent.pm line \d+.};
+foreach my $s ( qw{
+	2008-X
+	208-1
+	2008
+	foo
+	2008/1
+	2009-1
+	2007-50
+	2008-1|
+	2008-13-1
+	2008/1
+	2008/12/1
+	2008-123
+	2008-12-123
+    } ){
+  test_error "P<$s>", "P<$s>", qr{invalid date from P<\Q$s\E> at .*?lib/Pod/Advent.pm line \d+.};
 }
 
 test_error "N<foo>", "N<foo>", qr{footnote 'foo' is not defined at .*?lib/Pod/Advent.pm line \d+.};

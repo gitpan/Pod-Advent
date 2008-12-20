@@ -23,3 +23,5 @@ pre { color: #000000;
 .sc { color: #000000;} /* semicolon */
 .v  { color: #B452CD;} /* v-string */
 .w  { color: #000000;} /* bareword */
+
+blockquote{ padding: 1em; border: 2px ridge black; background-color:#eee }

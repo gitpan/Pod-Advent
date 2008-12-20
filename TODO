@@ -4,7 +4,13 @@
 # (no particular order) #
 #########################
 
+change __speller() method to a __text_filter() sub that calls &text_filter attribute if it exists.  defaults to sub { __speller }.  lays way for translating subclasses, or html-muckers, or whatever. possibly create a Pod::Advent::Translate (passed a object w/a ->translate() method).
+
+doc & test case re:  =cut/comment/=pod method of comments.
+
 document that, although Makefile.PL complains, module runs fine w/o Text::Aspell.
+
+Linga::Translate support;  --lang option.
 
 reposition the 'View Source (POD)' link?
 
@@ -30,14 +36,15 @@ check html output for validity
 
 custom podchecker (and/or subclass of Pod::Checker)
 
+rewrite with Pod::Simple::Methody ?
+
 ------------------
 Items from Jerrad:
 ------------------
 
-Wish: P<> should support |Name syntax, since linking by name, rather than
-mention the name and linking the date is also/traditionally done.
-
-Query: So what does P<> buy us over A<>, other than semantic mark-up?
+process <pre> for pod like A<>?
+	(maybe have a new tag?  can a new T<> work multi-line?
+	echo -e "=begin pre\n\nA<http://example.com|Test>\n\n=end pre" | perl -Ilib bin/pod2advent +
 
 WISH: better comment support: #lines, and extracting whole <!-- --> clause,
 rather than passing it through and hoping the browser parses results correctly.
@@ -48,13 +55,13 @@ rather than passing it through and hoping the browser parses results correctly.
 COVERAGE STATS
 ##############
 
-*** v0.14 ***
+*** v0.15 ***
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 File                           stmt   bran   cond    sub    pod   time  total
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
-bin/pod2advent                100.0  100.0    n/a  100.0    n/a    0.1  100.0	#  26/26
-blib/lib/Pod/Advent.pm        100.0  100.0   97.1  100.0  100.0   99.9   99.5	# 437/439
-Total                         100.0  100.0   97.1  100.0  100.0  100.0   99.6	# 463/465
+bin/pod2advent                100.0  100.0    n/a  100.0    n/a    0.2  100.0	#  36/36
+blib/lib/Pod/Advent.pm        100.0  100.0   95.6  100.0  100.0   99.8   99.3	# 438/441
+Total                         100.0  100.0   95.6  100.0  100.0  100.0   99.4	# 474/477
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 export HARNESS_PERL_SWITCHES=-MDevel::Cover=+ignore,Errno.pm

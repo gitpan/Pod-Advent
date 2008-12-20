@@ -7,7 +7,7 @@ use Perl::Tidy;
 use Cwd;
 use File::Basename();
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 our @mode;
 our $section;
@@ -143,10 +143,10 @@ sub _handle_element_start {
     $parser->add( sprintf '<p><a name="footnote_%s" id="footnote_%s"></a>%d. ', $section, $section, $n);
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'quote' ){
     $mode[-1] = $attr_hash_r->{target};
-    $parser->add('<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee">');
+    $parser->add('<blockquote>');
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'eds' ){
     $mode[-1] = $attr_hash_r->{target};
-    $parser->add('<blockquote style="padding: 1em; border: 2px ridge black; background-color:#eee">');
+    $parser->add('<blockquote>');
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'code' ){
     $section = $attr_hash_r->{target};
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'codeNNN' ){
@@ -282,9 +282,11 @@ sub _handle_text {
     $footnotes{$text} = 1 + scalar keys %footnotes;
     $out .= sprintf '<sup><a href="#footnote_%s">%s</a></sup>', $text, $footnotes{$text};
   }elsif( $mode eq 'P' ){
-    my ($year, $day) = split '-', $text, 2;
+    my ($year, $day, $label) = $text =~ m/^(\d{4})-(?:12-)?(\d{1,2})(?:\|(.+))?$/;
     die "invalid date from P<$text>" unless $year =~ /^200[0-8]$/ && 1 <= $day && $day <= 25;
-    $out .= sprintf '<a href="../../%d/%d">%d/%02d</a>', $year, $day, $year, $day;
+    $out .= sprintf '<a href="../../%d/%d/">%s</a>',
+	$year, $day, ($label ? $label : sprintf '%d/%d', $year, $day);
+
   }elsif( $mode eq 'sourcedcode' ){
     die "bad filename '$text'" unless -r $text;
     $blocks{sourced_file} = $text;
@@ -304,8 +306,8 @@ sub _handle_text {
   }elsif( $mode eq 'A' ){
     my ($href, $text) = split /\|/, $text, 2;
     $text = $href unless defined $text;
-    $parser->add( sprintf('<a href="%s">%s</a>',$href,$text) );
     $parser->__spellcheck($text) unless $text =~ /^http/;
+    $parser->add( sprintf('<a href="%s">%s</a>',$href,$text) );
   }elsif( $mode eq 'M' ){
     if( $M_values_seen{$text}++ ){
       $parser->add($text);
@@ -362,7 +364,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.14
+Version 0.15
 
 =head1 GETTING STARTED
 
@@ -451,7 +453,7 @@ Insert a superscript footnote reference. See L<"Footnotes">.
 
 =head3 PE<lt>E<gt>
 
-Link to a B<P>ast Advent Calendar entry.  Syntax is I<E<lt>YYYY-DE<gt>>.
+Link to a B<P>ast Advent Calendar entry.  Syntax is I<E<lt>YYYY-DE<gt>>. I<YYYY-12-D> may also be used, as can I<E<lt>YYYY-D|labelE<gt>> (or both).
 
 =head3 DE<lt>E<gt>
 
