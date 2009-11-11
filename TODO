@@ -4,7 +4,23 @@
 # (no particular order) #
 #########################
 
+==== ON DECK ====
+
+pod for new (v0.15) pod2advent cmdline options.
+
+option for repeated linking of M<>  (or a new W<> code?)
+=over/=item/=back  UL/LI support
+support title/author instead of advent_title/advent_author
+	use this instead of --noadvent flag?
+Add a T<fmt> code (or re-purpose D<>?) for timestamping.
+
+jerrad's multiple P<> usage item
+
+
+==== IN THE HOLE ====
+
 change __speller() method to a __text_filter() sub that calls &text_filter attribute if it exists.  defaults to sub { __speller }.  lays way for translating subclasses, or html-muckers, or whatever. possibly create a Pod::Advent::Translate (passed a object w/a ->translate() method).
+	==> See v0.14 RC's
 
 doc & test case re:  =cut/comment/=pod method of comments.
 
@@ -13,8 +29,6 @@ document that, although Makefile.PL complains, module runs fine w/o Text::Aspell
 Linga::Translate support;  --lang option.
 
 reposition the 'View Source (POD)' link?
-
-pod2advent --spellcheck option (default on) ..  and  warn cleanly if trying to sepllcheck and can't load Text::Aspell
 
 pod2advent option to generate template (basically cat ex/getting_started.pod)
 
@@ -50,6 +64,10 @@ WISH: better comment support: #lines, and extracting whole <!-- --> clause,
 rather than passing it through and hoping the browser parses results correctly.
   ==> See TODO test cases in t/snippets.t
 
+AIM log 2008-12-24:
+(8:48:25 PM) Jerrad Pierce: .do P & M interact, so P also only links the first instance of an entity (by date, or |alternateName)?
+(8:50:57 PM) David Westbrook: P/M are seperate ..   interesting question re: P -- it doesn't have that link-first-only behvaior that M does, but it easily could
+(8:53:30 PM) Jerrad Pierce: it's a rare case, but Yanick's last write-p cited the same old module multiple times
 
 ##############
 COVERAGE STATS

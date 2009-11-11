@@ -3,10 +3,32 @@
 use strict;
 use warnings;
 use Pod::Advent;
+use Getopt::Long;
 
 my $pod = shift @ARGV or die "need pod filename, or - for file on stdin, or + for snippet on stdin";
 
+
+my $css;
+my $isadvent = 1;
+my $spellcheck = 1;
+GetOptions(
+	'css=s' => \$css,
+	'advent!' => \$isadvent,
+	'spellcheck!' => \$spellcheck,
+);
+
 my $advent = Pod::Advent->new;
+
+if( !$spellcheck && $advent->spellcheck_enabled ){
+  # user wants the (available) spellcheck turned off
+
+  # HACK. This should be an accessor to an attribute.
+  $Pod::Advent::speller = undef;
+}
+
+$advent->css_url($css) if $css;
+
+$Pod::Advent::data{isAdvent} = $isadvent;  # HACK. This should be an accessor to an attribute.
 
 if( $pod eq '-' ){
   $advent->parse_file( \*STDIN );

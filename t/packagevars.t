@@ -2,10 +2,11 @@
 
 use strict;
 use warnings;
-use Test::More tests => 21;
+use Test::More tests => 22;
+use Test::Differences;
 use Pod::Advent;
 
-is( $Pod::Advent::VERSION, '0.15', 'got VERSION' );
+is( $Pod::Advent::VERSION, '0.17', 'got VERSION' );
 is( $Pod::Advent::section, '', 'got section' );
 is_deeply( \@Pod::Advent::mode, [], 'got mode' );
 is_deeply( \%Pod::Advent::M_values_seen, {}, 'got M_values_seen' );
@@ -17,7 +18,7 @@ is_deeply( \@Pod::Advent::misspelled, [], 'got misspelled' );
 my $h;
 
 $h = \%Pod::Advent::data;
-is_deeply( [sort keys %$h], [qw/author body css_url day file title year/], 'got data keys' );
+eq_or_diff( [sort keys %$h], [qw/author body css_url day file isAdvent title year/], 'got data keys' );
 is( $h->{title}, undef, 'got data.title' );
 is( $h->{author}, undef, 'got data.author' );
 is( $h->{year}, (localtime)[5]+1900, 'got data.year' );
@@ -25,6 +26,7 @@ is( $h->{day}, 0, 'got data.day' );
 is( $h->{body}, '', 'got data.body' );
 is( $h->{file}, undef, 'got data.file' );
 is( $h->{css_url}, '../style.css', 'got data.css_url' );
+is( $h->{isAdvent}, 1, 'got data.isAdvent' );
 
 $h = \%Pod::Advent::blocks;
 is_deeply( [sort keys %$h], [qw/code codeNNN pre sourced_desc sourced_file/], 'got blocks keys' );

@@ -1,5 +1,17 @@
 Revision history for Pod-Advent
 
+0.17    2009-11-11
+	* test suite updates
+	* Changes updates
+
+0.16    2009-01-05 # unreleased
+	* TODO updates
+	* pod2advent options:
+		--css=foo.css
+		--noadvent
+		--nospellcheck
+	* warn cleanly if can't load Text::Aspell
+
 0.15    2008-12-20
         * Support YYYY-12-DD for P<> (jerrad)
         * Support |Name syntax for P<> (jerrad)
