@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 70;
+use Test::More tests => 73;
 use Pod::Advent;
 use IO::CaptureOutput qw(capture);
 
@@ -55,6 +55,9 @@ test_snippet 'P<> d', 'P<2008-12-1|One>', '<p><a href="../../2008/1/">One</a></p
 test_snippet 'P<> e', 'P<2008-01>', '<p><a href="../../2008/1/">2008/1</a></p>';
 test_snippet 'D<>', 'D<test>', '<p>test</p>';
 test_snippet 'D<F<>>', 'D<foo F<test> bar>', '<p>foo <tt>test</tt> bar</p>';
+
+my $y = (localtime)[5]+1900;  # make sure current year checks out
+test_snippet "P<> a - $y", "P<$y-1>", qq{<p><a href="../../$y/1/">$y/1</a></p>};
 
 test_snippet 'code', qq{=begin code\n\nfoo\n\n=end code}, q{<pre>
 <span class="w">foo</span>
@@ -110,7 +113,8 @@ foreach my $s ( qw{
 	2008
 	foo
 	2008/1
-	2009-1
+	2010-1
+	2020-1
 	2007-50
 	2008-1|
 	2008-13-1

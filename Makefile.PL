@@ -1,7 +1,7 @@
 use strict;
 use warnings;
-use 5.006;
-use ExtUtils::MakeMaker 6.48;
+use 5.00601;
+use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME                => 'Pod::Advent',
@@ -20,9 +20,13 @@ WriteMakefile(
 	'File::Basename' => 0,		#	2.74
 	'Cwd' => 0,			#	3.29
 	'Test::Differences' => 0,	#	0.4801
-	'ExtUtils::MakeMaker' => 6.48,  # MIN_PERL_VERSION support was added in v6.47_01
+	'ExtUtils::MakeMaker' => 0,	#	6.48
     },
-    MIN_PERL_VERSION    => '5.6.1',
+    ( $ExtUtils::MakeMaker::VERSION >= 6.48
+        # MIN_PERL_VERSION support was added in v6.47_01
+	? (MIN_PERL_VERSION    => '5.6.1')
+	: ()
+    ),
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Pod-Advent-*' },
 );

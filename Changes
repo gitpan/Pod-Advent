@@ -1,5 +1,10 @@
 Revision history for Pod-Advent
 
+0.18    2009-12-01
+	* support for 2009 in P<>  (*P*ast) tag (bill)
+	  added 2009, suppressed warnings, updated t/snippets.t
+	* don't force upgrade of ExtUtils::MakeMaker (jerrad)
+
 0.17    2009-11-11
 	* test suite updates
 	* Changes updates
