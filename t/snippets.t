@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 73;
+use Test::More tests => 74;
 use Pod::Advent;
 use IO::CaptureOutput qw(capture);
 
@@ -113,7 +113,7 @@ foreach my $s ( qw{
 	2008
 	foo
 	2008/1
-	2010-1
+	2011-1
 	2020-1
 	2007-50
 	2008-1|
@@ -135,4 +135,9 @@ blah B<and> stuff
 
 =end footnote foo
 EOF
+
+TODO: {
+local $TODO = 'may not be able to properly interpolate tags in =for values';
+test_snippet "author D<>", "=for advent_author D<Bill 'N1VUX'> Ricker\n\n=head1 foo", "foo";
+}
 

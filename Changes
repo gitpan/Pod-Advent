@@ -1,5 +1,12 @@
 Revision history for Pod-Advent
 
+0.20	2010-11-22
+	* Updated for year 2010.
+
+0.19	2009-12-02 (unreleased)
+	* added a TOOD test for "=for advent_author foo D<bar> stuff" case (bill)
+	* added -npro flag to perltidy to ignore ~/.perltidyrc (steve)
+
 0.18    2009-12-01
 	* support for 2009 in P<>  (*P*ast) tag (bill)
 	  added 2009, suppressed warnings, updated t/snippets.t

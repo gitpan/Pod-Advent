@@ -6,7 +6,7 @@ use Test::More tests => 22;
 use Test::Differences;
 use Pod::Advent;
 
-is( $Pod::Advent::VERSION, '0.18', 'got VERSION' );
+is( $Pod::Advent::VERSION, '0.20', 'got VERSION' );
 is( $Pod::Advent::section, '', 'got section' );
 is_deeply( \@Pod::Advent::mode, [], 'got mode' );
 is_deeply( \%Pod::Advent::M_values_seen, {}, 'got M_values_seen' );

@@ -15,6 +15,11 @@ support title/author instead of advent_title/advent_author
 Add a T<fmt> code (or re-purpose D<>?) for timestamping.
 
 jerrad's multiple P<> usage item
+  ==> What is this??
+    possibly: make P act like M, and only link the first occurrence??
+    ---> check gmail/aim logs
+
+(2009-12-02 9:25:13 PM) Jerrad Pierce: hey. Any idea why paragraphs aren't respected by P::A in begin blocks, like footnotes?
 
 
 ==== IN THE HOLE ====

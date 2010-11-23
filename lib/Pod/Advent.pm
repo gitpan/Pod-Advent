@@ -7,7 +7,7 @@ use Perl::Tidy;
 use Cwd;
 use File::Basename();
 
-our $VERSION = '0.18';
+our $VERSION = '0.20';
 
 our @mode;
 our $section;
@@ -18,6 +18,7 @@ our $BODY_ONLY;
 our $speller;
 our @misspelled;
 our %footnotes;
+our @PERLTIDY_ARGV = qw/ -npro -html -pre /;
 
 __PACKAGE__->__reset();
 
@@ -234,7 +235,7 @@ EOF
     Perl::Tidy::perltidy(
         source            => \$blocks{$section},
         destination       => \$s,
-        argv              => [qw/-html -pre/, ($section=~/NNN/?'-nnn':()) ],
+        argv              => [ @PERLTIDY_ARGV, ($section=~/NNN/?'-nnn':()) ],
     );
     $parser->add($s);
     $parser->nl;
@@ -273,7 +274,7 @@ sub _handle_text {
     Perl::Tidy::perltidy(
         source            => \$text,
         destination       => \$s,
-        argv              => [qw/-html -pre/],
+        argv              => [ @PERLTIDY_ARGV ],
     );
     $out .= $s;
   }elsif( $mode eq 'C' ){
@@ -281,7 +282,7 @@ sub _handle_text {
     Perl::Tidy::perltidy(
         source            => \$text,
         destination       => \$s,
-        argv              => [qw/-html -pre/],
+        argv              => [ @PERLTIDY_ARGV ],
     );
     $s =~ s#^<pre>\s*(.*?)\s*</pre>\s*$#$1#si;
     $out .= $s;
@@ -291,7 +292,7 @@ sub _handle_text {
     $out .= sprintf '<sup><a href="#footnote_%s">%s</a></sup>', $text, $footnotes{$text};
   }elsif( $mode eq 'P' ){
     my ($year, $day, $label) = $text =~ m/^(\d{4})-(?:12-)?(\d{1,2})(?:\|(.+))?$/;
-    die "invalid date from P<$text>" unless $year && $year =~ /^200[0-9]$/ && 1 <= $day && $day <= 25;
+    die "invalid date from P<$text>" unless $year && 2000 <= $year && $year <= 2010 && 1 <= $day && $day <= 25;
     $out .= sprintf '<a href="../../%d/%d/">%s</a>',
 	$year, $day, ($label ? $label : sprintf '%d/%d', $year, $day);
 
@@ -303,7 +304,7 @@ sub _handle_text {
     Perl::Tidy::perltidy(
         source            => $text,
         destination       => \$s,
-        argv              => [qw/-html -pre -nnn/],
+        argv              => [ @PERLTIDY_ARGV, '-nnn' ],
     );
     $out .= $s;
   }elsif( $mode eq 'Para' && $section ){
@@ -372,7 +373,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.18
+Version 0.20
 
 =head1 GETTING STARTED
 
