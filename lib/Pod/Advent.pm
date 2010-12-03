@@ -6,8 +6,9 @@ use base qw(Pod::Simple);
 use Perl::Tidy;
 use Cwd;
 use File::Basename();
+use HTML::Entities();
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 our @mode;
 our $section;
@@ -154,7 +155,8 @@ sub _handle_element_start {
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'codeNNN' ){
     $section = $attr_hash_r->{target};
   }elsif( $element_name eq 'for' && $attr_hash_r->{target} eq 'pre' ){
-    $section = $attr_hash_r->{target};
+    $mode[-1] = $attr_hash_r->{target};
+    $section = $attr_hash_r->{title} || 'normal';
   }
 }
 
@@ -241,10 +243,12 @@ EOF
     $parser->nl;
     $blocks{$section} = '';
     $section = '';
-  }elsif( $element_name eq 'for' && $section eq 'pre' ){
+  }elsif( $element_name eq 'for' && $mode eq 'pre' ){
     $blocks{$section} =~ s/\s+$//s;
     $parser->add('<pre><span class="c">');
-    $parser->add($blocks{$section});
+    my $s = $blocks{$section};
+    $s = HTML::Entities::encode_entities($s) if $section eq 'encode_entities';
+    $parser->add( $s );
     $parser->add('</span></pre>');
     $parser->nl;
     $blocks{$section} = '';
@@ -305,7 +309,9 @@ sub _handle_text {
         source            => $text,
         destination       => \$s,
         argv              => [ @PERLTIDY_ARGV, '-nnn' ],
+#	formatter         => bless( {file=>$text, dest => \$s}, 'Pod::Advent::Tidy' ),
     );
+    $s =~ s#^\s*(\d+) #<a name="$text.$1"></a>$&#mg;
     $out .= $s;
   }elsif( $mode eq 'Para' && $section ){
     $data{$section} = $text;
@@ -313,15 +319,23 @@ sub _handle_text {
     $parser->__spellcheck($text);
     $out .= $text if $mode[-2] eq 'footnote';
   }elsif( $mode eq 'A' ){
-    my ($href, $text) = split /\|/, $text, 2;
+    my $href;
+    ($href, $text) = split /\|/, $text, 2;
     $text = $href unless defined $text;
     $parser->__spellcheck($text) unless $text =~ /^http/;
     $parser->add( sprintf('<a href="%s">%s</a>',$href,$text) );
   }elsif( $mode eq 'M' ){
+    my @parts = split /\|/, $text, 2;
+    my $title;
+    ($title, $text) = @parts if scalar(@parts)>1;
+    my $display_text = defined $title
+	? sprintf('<tt title="%s">%s</tt>', $title, $text)
+	: $text
+    ;
     if( $M_values_seen{$text}++ ){
-      $parser->add($text);
+      $parser->add($display_text);
     }else{
-      $parser->add( sprintf('<a href="http://search.cpan.org/perldoc?%s">%s</a>',$text,$text) );
+      $parser->add( sprintf('<a href="http://search.cpan.org/perldoc?%s">%s</a>',$text,$display_text) );
     }
   }elsif( $mode eq 'Data' && $section ){
     $blocks{$section} .= $text . "\n\n";
@@ -363,6 +377,18 @@ sub num_spelling_errors {
 
 1; # End of Pod::Advent
 
+#package Pod::Advent::Tidy;
+#sub write_line {
+#  my ( $self, $line_of_tokens ) = @_;
+#  ${ $self->{dest} } .= sprintf q{<a name="%s.%s"></a>%4d %s},
+#	$self->{file},
+#	$line_of_tokens->{_line_number},
+#	$line_of_tokens->{_line_number},
+#	$line_of_tokens->{_line_text},
+#  ;
+#}
+#1;
+
 __END__
 
 =pod
@@ -373,7 +399,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.20
+Version 0.21
 
 =head1 GETTING STARTED
 
@@ -523,7 +549,7 @@ Same as L<code>, but with line numbers.
   $foo->do_it;
   =end codeNNN
 
-=head3 pre
+=head3 pre [encode_entities]
 
 Display a snippet (e.g. data, output, etc) as E<lt>PREE<gt>-formatted text (does not use Perl::Tidy).
 
@@ -533,6 +559,8 @@ Display a snippet (e.g. data, output, etc) as E<lt>PREE<gt>-formatted text (does
   2,4,9
   3,8,27
   =end pre
+
+If C<encode_entities> parameter is specified, then the text will be processed by L<HTML::Entities>C<::encode_entities()>.  This is especially handy/necessary if your text contains E<lt>'s or E<gt>'s.
 
 =head3 quote
 

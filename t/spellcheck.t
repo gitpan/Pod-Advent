@@ -9,6 +9,10 @@ use Test::Differences;
 eval "use Text::Aspell";
 plan skip_all => "Text::Aspell required for testing spellcheck" if $@;
 
+# for the case of an empty package, which is useful for testing with.
+eval { Text::Aspell->can('new') } or
+  plan skip_all => "Text::Aspell required for testing spellcheck";
+
 plan tests => 26;
 
 my $advent = Pod::Advent->new;

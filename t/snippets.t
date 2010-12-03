@@ -2,9 +2,10 @@
 
 use strict;
 use warnings;
-use Test::More tests => 74;
+use Test::More tests => 77;
 use Pod::Advent;
 use IO::CaptureOutput qw(capture);
+$|=1;
 
 sub test_snippet {
   my $desc     = shift;
@@ -41,6 +42,7 @@ test_snippet 'italics line', 'This is a I<test>.', '<p>This is a <span style="fo
 test_snippet 'A<url>', 'A<http://example.com>', '<p><a href="http://example.com">http://example.com</a></p>';
 test_snippet 'A<url|desc>', 'A<http://example.com|stuff>', '<p><a href="http://example.com">stuff</a></p>';
 test_snippet 'M<Module::Name>', 'M<Foo::Bar>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar">Foo::Bar</a></tt></p>';
+test_snippet 'M<title|Module::Name>', 'M<FB|Foo::Bar>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar"><tt title="FB">Foo::Bar</tt></a></tt></p>';
 
 test_snippet 'L<>', 'L<test>', '<p><a href="test">test</a></p>';
 test_snippet 'F<>', 'F<test>', '<p><tt>test</tt></p>';
@@ -68,6 +70,8 @@ test_snippet 'codeNNN', qq{=begin codeNNN\n\nfoo\n\n=end codeNNN}, q{<pre>
 </pre>
 };
 test_snippet 'pre', qq{=begin pre\n\nfoo\n\n=end pre}, q{<pre><span class="c">foo</span></pre>};
+test_snippet 'pre-html-entities', qq{=begin pre\n\nfoo < > & bar\n\n=end pre}, q{<pre><span class="c">foo < > & bar</span></pre>};
+test_snippet 'pre-html-entities-encode', qq{=begin pre encode_entities\n\nfoo < > & bar\n\n=end pre}, q{<pre><span class="c">foo &lt; &gt; &amp; bar</span></pre>};
 test_snippet 'quote', qq{=begin quote\n\nfoo\n\n=end quote}, q{<blockquote><p>foo</p>
 </blockquote>
 }, 1;

@@ -25,4 +25,5 @@ ex/getting_started.html
 ex/footnotes.pod
 ex/footnotes.html
 style.css
+docs/coverage.txt
 META.yml                                 Module meta-data (added by MakeMaker)

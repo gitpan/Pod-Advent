@@ -6,13 +6,17 @@ use Test::More tests => 22;
 use Test::Differences;
 use Pod::Advent;
 
-is( $Pod::Advent::VERSION, '0.20', 'got VERSION' );
+is( $Pod::Advent::VERSION, '0.21', 'got VERSION' );
 is( $Pod::Advent::section, '', 'got section' );
 is_deeply( \@Pod::Advent::mode, [], 'got mode' );
 is_deeply( \%Pod::Advent::M_values_seen, {}, 'got M_values_seen' );
 is( $Pod::Advent::BODY_ONLY, '0', 'got BODY_ONLY' );
 
-isa_ok( $Pod::Advent::speller, 'Text::Aspell', "got speller" );
+SKIP: {
+  skip "Text::Aspell is not installed", 1 unless eval { $INC{'Text/Aspell.pm'} && Text::Aspell->can('new') };
+  isa_ok( $Pod::Advent::speller, 'Text::Aspell', "got speller" );
+}
+
 is_deeply( \@Pod::Advent::misspelled, [], 'got misspelled' );
 
 my $h;
