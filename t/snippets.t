@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 77;
+use Test::More tests => 79;
 use Pod::Advent;
 use IO::CaptureOutput qw(capture);
 $|=1;
@@ -111,13 +111,14 @@ stuff --></p>
 
 #####################################################
 
+my $NEXTYEAR = (localtime)[5] + 1900 + 1;
 foreach my $s ( qw{
 	2008-X
 	208-1
 	2008
 	foo
 	2008/1
-	2011-1
+	$NEXTYEAR-1
 	2020-1
 	2007-50
 	2008-1|
@@ -126,6 +127,7 @@ foreach my $s ( qw{
 	2008/12/1
 	2008-123
 	2008-12-123
+	2008-26
     } ){
   test_error "P<$s>", "P<$s>", qr{invalid date from P<\Q$s\E> at .*?lib/Pod/Advent.pm line \d+.};
 }

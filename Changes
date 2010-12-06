@@ -1,15 +1,22 @@
 Revision history for Pod-Advent
 
+0.22	2010-12-06
+	* Fix win32 failing test
+	  (had to workaround win32 not supporting multi-line echo)
+	* minor doc typo fixes
+	* Removed hard-coded current-year references.  So now should
+	  no longer need a yearly $year++ update.
+
 0.21	2010-12-02
 	* Add html anchors to line numbers for "=sourcedcode" (RT#63526)
 	* Now installs cleanly when Text::Aspell is missing (RT#63541)
 	  Removed Text::Aspell as a required module in Makefile.PL
 	  Tests SKIP if Text::Aspell is missing.
 	* Support optional display text for M<> (RT#63525)
-	* Add optional paramter so that "=begin pre "encode_entities" will
+	* Add optional paramter so that "=begin pre encode_entities" will
 	  auto-entify contents w/HTML::Entities::encode_entities(). (RT#63527)
 	  Added HTML::Entities as a dependency in Makefile.PL.
-	* test suite tweaks to add a little more coverage (now at 98.6%)
+	* test suite tweaks to add a little more coverage (now at 98.7%)
 	* added docs/coverage.txt to the distro.
 
 0.20	2010-11-22

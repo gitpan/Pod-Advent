@@ -8,7 +8,7 @@ use Cwd;
 use File::Basename();
 use HTML::Entities();
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 our @mode;
 our $section;
@@ -296,7 +296,8 @@ sub _handle_text {
     $out .= sprintf '<sup><a href="#footnote_%s">%s</a></sup>', $text, $footnotes{$text};
   }elsif( $mode eq 'P' ){
     my ($year, $day, $label) = $text =~ m/^(\d{4})-(?:12-)?(\d{1,2})(?:\|(.+))?$/;
-    die "invalid date from P<$text>" unless $year && 2000 <= $year && $year <= 2010 && 1 <= $day && $day <= 25;
+    my $CURYEAR = (localtime)[5] + 1900;
+    die "invalid date from P<$text>" unless $year && 2000 <= $year && $year <= $CURYEAR && 1 <= $day && $day <= 25;
     $out .= sprintf '<a href="../../%d/%d/">%s</a>',
 	$year, $day, ($label ? $label : sprintf '%d/%d', $year, $day);
 
@@ -399,7 +400,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.21
+Version 0.22
 
 =head1 GETTING STARTED
 

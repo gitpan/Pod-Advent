@@ -4,16 +4,6 @@
 # (no particular order) #
 #########################
 
-==== For 2010 (ca v0.21-v0.22) ====
-
-RT Queue
-
-make Text::Aspell optional for installation.
-make test suite pass/skip cleanly if Text::Aspell not installed.
-
-update coverage stats (docs/coverage.txt)
-
-
 ==== ON DECK ====
 
 pod for new (v0.15) pod2advent cmdline options.
