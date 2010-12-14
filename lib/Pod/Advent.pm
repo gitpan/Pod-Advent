@@ -8,7 +8,7 @@ use Cwd;
 use File::Basename();
 use HTML::Entities();
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 our @mode;
 our $section;
@@ -326,17 +326,15 @@ sub _handle_text {
     $parser->__spellcheck($text) unless $text =~ /^http/;
     $parser->add( sprintf('<a href="%s">%s</a>',$href,$text) );
   }elsif( $mode eq 'M' ){
-    my @parts = split /\|/, $text, 2;
-    my $title;
-    ($title, $text) = @parts if scalar(@parts)>1;
-    my $display_text = defined $title
-	? sprintf('<tt title="%s">%s</tt>', $title, $text)
-	: $text
-    ;
-    if( $M_values_seen{$text}++ ){
-      $parser->add($display_text);
+    my($real, $alt);
+    unless( ($real, $alt) = split /\|/, $text, 2 ){
+	$real = $text;
+    }
+    $alt = $real if !defined $alt;
+    if( $M_values_seen{$real}++ ){
+      $parser->add( sprintf('<span title="%s">%s</span>', $real, $alt) );
     }else{
-      $parser->add( sprintf('<a href="http://search.cpan.org/perldoc?%s">%s</a>',$text,$display_text) );
+      $parser->add( sprintf('<a href="http://search.cpan.org/perldoc?%s" title="%s">%s</a>',$real,$real, $alt) );
     }
   }elsif( $mode eq 'Data' && $section ){
     $blocks{$section} .= $text . "\n\n";
@@ -400,7 +398,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.22
+Version 0.23
 
 =head1 GETTING STARTED
 
@@ -480,6 +478,7 @@ This is because POD doesn't support the case of LE<lt>http://example.com|Example
 This is intended for module names. The first instance, it will <tt> it and hyperlink it to a F<http://search.cpan.org/perldoc?> url. All following instances will just <tt> it. Being just for module searches, any other searches can simply use the AE<lt>E<gt> code instead.
 
   M<Pod::Simple>
+  M<Pod::Simple|PS>
   A<http://search.cpan.org/search?query=Pod::Simple::Subclassing|Pod::Simple::Subclassing>
   A<http://search.cpan.org/search?dist=TimeDate|TimeDate>
 
@@ -503,6 +502,10 @@ B<D>isables spellchecking for the contents, which can be a single word or a phra
 Include the contents of a file formatted with Perl::Tidy (including line numbers).
 
   =sourcedcode foo.pl
+
+The line numbers are anchored, so you can refer to them with links:
+
+  A<#foo.pl.3|third line>
 
 =head2 Custom Info Targets
 

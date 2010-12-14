@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 79;
+use Test::More tests => 81;
 use Pod::Advent;
 use IO::CaptureOutput qw(capture);
 $|=1;
@@ -40,9 +40,11 @@ test_snippet 'bold line', 'This is a B<test>.', '<p>This is a <span style="font-
 test_snippet 'italics line', 'This is a I<test>.', '<p>This is a <span style="font-style: italic">test</span>.</p>';
 
 test_snippet 'A<url>', 'A<http://example.com>', '<p><a href="http://example.com">http://example.com</a></p>';
+test_snippet 'A<#anchor>', 'A<#foo.pl.3>', '<p><a href="#foo.pl.3">#foo.pl.3</a></p>';
+test_snippet 'A<#anchor|desc>', 'A<#foo.pl.3|line 3>', '<p><a href="#foo.pl.3">line 3</a></p>';
 test_snippet 'A<url|desc>', 'A<http://example.com|stuff>', '<p><a href="http://example.com">stuff</a></p>';
-test_snippet 'M<Module::Name>', 'M<Foo::Bar>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar">Foo::Bar</a></tt></p>';
-test_snippet 'M<title|Module::Name>', 'M<FB|Foo::Bar>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar"><tt title="FB">Foo::Bar</tt></a></tt></p>';
+test_snippet 'M<Module::Name>', 'M<Foo::Bar>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar" title="Foo::Bar">Foo::Bar</a></tt></p>';
+test_snippet 'M<Module::Name|title>', 'M<Foo::Bar|FB>', '<p><tt><a href="http://search.cpan.org/perldoc?Foo::Bar" title="Foo::Bar">FB</a></tt></p>';
 
 test_snippet 'L<>', 'L<test>', '<p><a href="test">test</a></p>';
 test_snippet 'F<>', 'F<test>', '<p><tt>test</tt></p>';

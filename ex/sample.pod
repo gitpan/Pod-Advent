@@ -76,6 +76,8 @@ And code sourced from the L<sample.pl> file:
 
 =sourcedcode sample.pl
 
+And a specific link to A<#sample.pl.3|the third line>.
+
 And just &lt;pre&gt; tag stuff, e.g. for output or data.
 
 mispelling example. repeating mispelling.

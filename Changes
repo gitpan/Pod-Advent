@@ -1,5 +1,15 @@
 Revision history for Pod-Advent
 
+0.23	2010-12-13
+	* Fixed typo in Makefile.PL in perl minversion (5.6.1 instead of 5.6.10)
+	* Makefile.PL updates to use EU::MM's BUILD_REQUIRES functionality.
+	* Specify min version 2.03 of Test::Harness for TODO support.
+	* Fixed behavior of M<Foo::Bar|altname> (RT#63860)
+	* Added tests, POD, and example in sample.pod for linking to the
+	  anchored line numbers in =sourcedcode sections. (Adam Russell)
+	  Example:  A<#foo.pl.3|see line 3>
+	* Changed shebang line in bin/pod2advent to #!perl (Adam Russell)
+
 0.22	2010-12-06
 	* Fix win32 failing test
 	  (had to workaround win32 not supporting multi-line echo)
