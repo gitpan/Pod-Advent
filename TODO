@@ -4,6 +4,8 @@
 # (no particular order) #
 #########################
 
+bookmark http://www.openswartz.com/2010/12/19/perltidy-and-method-happy-together in case we ever need to override  pre-/post-filters in perltidy due to some wonky reserved word collision or syntax addition in a mod99.pl confusing it.
+
 ==== ON DECK ====
 
 pod for new (v0.15) pod2advent cmdline options.

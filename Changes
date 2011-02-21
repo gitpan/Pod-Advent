@@ -1,5 +1,9 @@
 Revision history for Pod-Advent
 
+0.24	2011-12-21
+	* Upped Perl::Tidy prereq to v20101217 (RT#65142)
+	* inc'd copyright
+
 0.23	2010-12-13
 	* Fixed typo in Makefile.PL in perl minversion (5.6.1 instead of 5.6.10)
 	* Makefile.PL updates to use EU::MM's BUILD_REQUIRES functionality.

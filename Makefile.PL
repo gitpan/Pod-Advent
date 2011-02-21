@@ -21,7 +21,7 @@ WriteMakefile(
     PREREQ_PM => {
 					# {newest as of 12/2008; should eventually become min vers}
 	'Pod::Simple' => 3.06,		# Need 'feature to parse additional text after =begin target as a block title' added in v3.06
-	'Perl::Tidy' => 20030726,	#	20021130 fails
+	'Perl::Tidy' => 20101217,	#	20021130 fails; 20090616 gives extra stderr.
 	'File::Basename' => 0,		#	2.74
 	'Cwd' => 0,			#	3.29
 	'HTML::Entities' => 0,		#	3.64

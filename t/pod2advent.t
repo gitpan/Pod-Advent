@@ -13,15 +13,13 @@ my @perl = ( $^X, '-Ilib' );
 push @perl, '-MDevel::Cover=-silent,1,-db,cover_db,-ignore,.,+select,advent,+select,Advent' if exists $INC{'Devel/Cover.pm'};
 
 my @files = (
-  [ 'ex/sample.pod', 'ex/sample.html', '## Please see file perltidy.ERR
-Possible SPELLING ERRORS:
+  [ 'ex/sample.pod', 'ex/sample.html', 'Possible SPELLING ERRORS:
 	href
 	lt
 	pre
 	mispelling
 ', ],
-  [ 'ex/getting_started.pod', 'ex/getting_started.html', '## Please see file perltidy.ERR
-', ],
+  [ 'ex/getting_started.pod', 'ex/getting_started.html', '', ],
   [ 'ex/footnotes.pod', 'ex/footnotes.html', 'Possible SPELLING ERRORS:
 	sourcedcode
 ', ],

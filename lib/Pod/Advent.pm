@@ -8,7 +8,7 @@ use Cwd;
 use File::Basename();
 use HTML::Entities();
 
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
 our @mode;
 our $section;
@@ -398,7 +398,7 @@ Pod::Advent - POD Formatter for The Perl Advent Calendar
 
 =head1 VERSION
 
-Version 0.23
+Version 0.24
 
 =head1 GETTING STARTED
 
@@ -776,7 +776,7 @@ The 2007 editors, Bill Ricker & Jerrad Pierce, for reviewing and providing feedb
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2007-2009 David Westbrook, all rights reserved.
+Copyright 2007-2011 David Westbrook, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

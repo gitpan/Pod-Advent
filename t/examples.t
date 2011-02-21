@@ -8,10 +8,8 @@ use Test::Differences;
 use IO::CaptureOutput qw(capture);
 
 my @files = (
-  [ 'ex/sample.pod', 'ex/sample.html', '## Please see file perltidy.ERR
-', [qw/ href lt pre mispelling mispelling /] ],
-  [ 'ex/getting_started.pod', 'ex/getting_started.html', '## Please see file perltidy.ERR
-', ],
+  [ 'ex/sample.pod', 'ex/sample.html', '', [qw/ href lt pre mispelling mispelling /] ],
+  [ 'ex/getting_started.pod', 'ex/getting_started.html', '', ],
   [ 'ex/footnotes.pod', 'ex/footnotes.html', '', [qw/ sourcedcode /] ],
 );
 foreach my $info ( @files ){
